@@ -1,7 +1,7 @@
 package com.gaspo.api.controller;
 
 import com.gaspo.api.model.UnidadeSaudeModel;
-import com.gaspo.api.repositoty.UnidadeSaudeRepository;
+import com.gaspo.api.repository.UnidadeSaudeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
