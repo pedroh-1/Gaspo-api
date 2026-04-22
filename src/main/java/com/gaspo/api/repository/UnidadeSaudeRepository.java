@@ -1,4 +1,4 @@
-package com.gaspo.api.repositoty;
+package com.gaspo.api.repository;
 
 import com.gaspo.api.model.UnidadeSaudeModel;
 import org.springframework.data.domain.Example;
