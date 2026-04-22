@@ -5,9 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+
+// Acho que não precisa dessa classe. -> Pedro :), essa classe representa a especialidade do medico, pode ser um atributo da classe profissional
 @Entity
 @Table(name = "tb_cbo", schema = "public")
-public class CboEntity {
+public class CboModel {
 
     @Id
     @Column(name = "co_cbo")
