@@ -1,22 +1,30 @@
 package com.gaspo.api.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
+@Entity
+@Table(name = "tb_agendado", schema = "public")
 public class ConsultaModel {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "co_seg_agendado")
     private Long id;
+
+    @Column(name = "dt_agendado", nullable = false)
     private Date data;
-    private String horario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "st_agendamento", nullable = false)
     private StatusConsulta status;
 
-    public ConsultaModel(){}
+    @ManyToOne
+    @JoinColumn(name = "co_seq_profissional")
+    private ProfissionalModel profissional;
 
-    public ConsultaModel(Long id, Date data, String horario, StatusConsulta status) {
-        this.id = id;
-        this.data = data;
-        this.horario = horario;
-        this.status = status;
-    }
+    public ConsultaModel(){}
 
     public Long getId() {
         return id;
@@ -34,14 +42,6 @@ public class ConsultaModel {
         this.data = data;
     }
 
-    public String getHorario() {
-        return horario;
-    }
-
-    public void setHorario(String horario) {
-        this.horario = horario;
-    }
-
     public StatusConsulta getStatus() {
         return status;
     }
@@ -49,4 +49,13 @@ public class ConsultaModel {
     public void setStatus(StatusConsulta status) {
         this.status = status;
     }
+
+    public ProfissionalModel getProfissional(){
+        return profissional;
+    }
+
+    public void setProfissional(ProfissionalModel profissional){
+        this.profissional = profissional;
+    }
+
 }
