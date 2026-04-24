@@ -3,19 +3,19 @@ package com.gaspo.api.model;
 public class AgendaModel {
 
     private Long id;
-    private String disponibilidade;
+    private Disponibilidade disponibilidade;
 
 
-    public AgendaModel(String disponibilidade, Long id) {
-        this.disponibilidade = disponibilidade;
+    public AgendaModel(Long id, Disponibilidade disponibilidade) {
         this.id = id;
+        this.disponibilidade = disponibilidade;
     }
 
-    public String getDisponibilidade() {
+    public Disponibilidade getDisponibilidade() {
         return disponibilidade;
     }
 
-    public void setDisponibilidade(String disponibilidade) {
+    public void setDisponibilidade(Disponibilidade disponibilidade) {
         this.disponibilidade = disponibilidade;
     }
 
