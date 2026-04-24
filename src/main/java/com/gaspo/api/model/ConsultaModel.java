@@ -8,7 +8,6 @@ public class ConsultaModel {
     private Date data;
     private String horario;
     private StatusConsulta status;
-    private String nome;
 
     public ConsultaModel(){}
 
