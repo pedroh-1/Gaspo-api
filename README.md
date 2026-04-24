@@ -1,8 +1,12 @@
 ![Uploading image.png…]()
 
 Datas:
+
 15/05 Projeto Interface
+
 29/05 
+
 12/06 Entrega do Backend
+
 26/06 Correção e Ajuste
   
