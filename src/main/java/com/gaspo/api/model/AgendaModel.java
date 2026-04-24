@@ -11,6 +11,9 @@ public class AgendaModel {
         this.disponibilidade = disponibilidade;
     }
 
+    public AgendaModel() {
+    }
+
     public Disponibilidade getDisponibilidade() {
         return disponibilidade;
     }
