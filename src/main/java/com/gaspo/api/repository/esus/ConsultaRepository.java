@@ -1,4 +1,4 @@
-package com.gaspo.api.repository;
+package com.gaspo.api.repository.esus;
 
 import com.gaspo.api.model.ConsultaModel;
 import com.gaspo.api.model.StatusConsulta;

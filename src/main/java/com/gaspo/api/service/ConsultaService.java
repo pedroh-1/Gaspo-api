@@ -1,10 +1,8 @@
 package com.gaspo.api.service;
 
-import com.gaspo.api.model.AgendaModel;
 import com.gaspo.api.model.ConsultaModel;
 import com.gaspo.api.model.StatusConsulta;
-import com.gaspo.api.repository.AgendaRepository;
-import com.gaspo.api.repository.ConsultaRepository;
+import com.gaspo.api.repository.esus.ConsultaRepository;
 import com.gaspo.api.repository.ProfissionalRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
