@@ -1,5 +1,6 @@
-package com.gaspo.api.model;
+package com.gaspo.api.model.esus;
 
+import com.gaspo.api.model.enums.StatusConsulta;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -22,7 +23,7 @@ public class ConsultaModel {
 
     @ManyToOne
     @JoinColumn(name = "co_seq_profissional")
-    private ProfessionalModel profissional;
+    private ProfissionalModel profissional;
 
     public ConsultaModel(){}
 
@@ -50,11 +51,11 @@ public class ConsultaModel {
         this.status = status;
     }
 
-    public ProfessionalModel getProfissional(){
+    public ProfissionalModel getProfissional(){
         return profissional;
     }
 
-    public void setProfissional(ProfessionalModel profissional){
+    public void setProfissional(ProfissionalModel profissional){
         this.profissional = profissional;
     }
 

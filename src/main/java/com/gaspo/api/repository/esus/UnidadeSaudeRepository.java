@@ -1,6 +1,6 @@
-package com.gaspo.api.repository;
+package com.gaspo.api.repository.esus;
 
-import com.gaspo.api.model.UnidadeSaudeModel;
+import com.gaspo.api.model.esus.UnidadeSaudeModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

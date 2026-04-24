@@ -1,14 +1,16 @@
 package com.gaspo.api.service;
 
-import com.gaspo.api.model.ConsultaModel;
-import com.gaspo.api.model.StatusConsulta;
+import com.gaspo.api.model.esus.ConsultaModel;
+import com.gaspo.api.model.enums.StatusConsulta;
 import com.gaspo.api.repository.esus.ConsultaRepository;
-import com.gaspo.api.repository.ProfissionalRepository;
+import com.gaspo.api.repository.esus.ProfissionalRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ConsultaService {
 
     @Autowired

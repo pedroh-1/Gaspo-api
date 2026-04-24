@@ -1,4 +1,4 @@
-package com.gaspo.api.model;
+package com.gaspo.api.model.enums;
 
 public enum StatusConsulta {
 

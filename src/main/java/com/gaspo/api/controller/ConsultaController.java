@@ -1,6 +1,6 @@
 package com.gaspo.api.controller;
 
-import com.gaspo.api.model.ConsultaModel;
+import com.gaspo.api.model.esus.ConsultaModel;
 import com.gaspo.api.service.ConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.gaspo.api.controller;
 
-import com.gaspo.api.model.ProfessionalModel;
+import com.gaspo.api.model.esus.ProfissionalModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +16,7 @@ public class ProfissionalController {
 
     // Rota: GET /api/profissionais
     @GetMapping
-    public List<ProfessionalModel> listarTodos() {
+    public List<ProfissionalModel> listarTodos() {
         // Substitua o '?' pelo seu Model/Entity de Profissional
         // return repository.findAll();
 

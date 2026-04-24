@@ -1,6 +1,6 @@
-package com.gaspo.api.repository;
+package com.gaspo.api.repository.esus;
 
-import com.gaspo.api.model.PacienteModel;
+import com.gaspo.api.model.esus.PacienteModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

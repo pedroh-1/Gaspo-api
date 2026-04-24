@@ -1,4 +1,4 @@
-package com.gaspo.api.controller;
+/*package com.gaspo.api.controller;
 
 import com.gaspo.api.model.AgendaModel;
 import com.gaspo.api.repository.AgendaRepository;
@@ -53,3 +53,4 @@ public class AgendaController {
         return ResponseEntity.ok(agendaService.salvar(agenda));
     }
 }
+*/

@@ -1,6 +1,6 @@
-package com.gaspo.api.model;
+package com.gaspo.api.model.esus;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gaspo.api.model.enums.StatusProfissional;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class ProfissionalModel {
     private UnidadeSaudeModel unidadeSaude;
 
     //@JsonIgnore
-   // @OneToMany(mappedBy ="profissional")
+    @OneToMany(mappedBy ="profissional")
     private List<ConsultaModel> consultas; // CALMO aqui ta acusando erro mas pq a classe ConsultaModel ainda nao virou entity
     public Long getId() {
         return id;

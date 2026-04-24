@@ -2,8 +2,8 @@ package com.gaspo.api.controller;
 
 import com.gaspo.api.dto.request.AvaliacaoRequestDTO;
 import com.gaspo.api.dto.response.AvaliacaoResponseDTO;
-import com.gaspo.api.model.AvaliacaoModel;
-import com.gaspo.api.model.PacienteModel;
+import com.gaspo.api.model.gaspo.AvaliacaoModel;
+import com.gaspo.api.model.esus.PacienteModel;
 import com.gaspo.api.service.AvaliacaoService;
 import com.gaspo.api.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;

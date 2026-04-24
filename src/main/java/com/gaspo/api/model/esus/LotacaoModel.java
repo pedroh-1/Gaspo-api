@@ -1,4 +1,4 @@
-package com.gaspo.api.model;
+package com.gaspo.api.model.esus;
 
 import jakarta.persistence.*;
 
@@ -12,7 +12,7 @@ public class LotacaoModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_prof")
-    private ProfessionalModel profissional;
+    private ProfissionalModel profissional;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_unidade_saude")
@@ -32,11 +32,11 @@ public class LotacaoModel {
         this.id = id;
     }
 
-    public ProfessionalModel getProfissional() {
+    public ProfissionalModel getProfissional() {
         return profissional;
     }
 
-    public void setProfissional(ProfessionalModel profissional) {
+    public void setProfissional(ProfissionalModel profissional) {
         this.profissional = profissional;
     }
 

@@ -1,7 +1,7 @@
 package com.gaspo.api.config;
 
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.sql.DataSource;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.gaspo.api.repository.esus", // Verifique se seu pacote existe
+        basePackages = "com.gaspo.api.repository.esus",
         entityManagerFactoryRef = "esusEntityManagerFactory",
         transactionManagerRef = "esusTransactionManager"
 )
@@ -36,10 +36,12 @@ public class EsusConfig {
 
     @Primary
     @Bean(name = "esusEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean esusEntityManagerFactory(EntityManagerFactoryBuilder builder) {
+    public LocalContainerEntityManagerFactoryBean esusEntityManagerFactory(
+            EntityManagerFactoryBuilder builder,
+            @Qualifier("esusDataSource") DataSource dataSource) {
         return builder
-                .dataSource(esusDataSource())
-                .packages("com.gaspo.api.model.esus") // Verifique se suas Entities estão aqui
+                .dataSource(dataSource)
+                .packages("com.gaspo.api.model.esus") // Ajustado para o pacote existente
                 .persistenceUnit("esus")
                 .build();
     }

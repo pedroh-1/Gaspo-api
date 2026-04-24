@@ -1,6 +1,6 @@
-package com.gaspo.api.repository;
+package com.gaspo.api.repository.gaspo;
 
-import com.gaspo.api.model.NotificacaoModel;
+import com.gaspo.api.model.gaspo.NotificacaoModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

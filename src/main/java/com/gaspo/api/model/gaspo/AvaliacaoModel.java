@@ -1,5 +1,6 @@
-package com.gaspo.api.model;
+package com.gaspo.api.model.gaspo;
 
+import com.gaspo.api.model.esus.PacienteModel;
 import jakarta.persistence.*;
 
 @Entity

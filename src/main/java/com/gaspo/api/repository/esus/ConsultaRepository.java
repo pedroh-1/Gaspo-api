@@ -1,8 +1,10 @@
 package com.gaspo.api.repository.esus;
 
-import com.gaspo.api.model.ConsultaModel;
-import com.gaspo.api.model.StatusConsulta;
+import com.gaspo.api.model.esus.ConsultaModel;
+import com.gaspo.api.model.enums.StatusConsulta;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,9 +19,8 @@ public interface ConsultaRepository extends JpaRepository<ConsultaModel, Long> {
     List<ConsultaModel> findByProfissionalId(Long profissionalId);
 
     //Buscar consultas em um intervalo de tempo
-    List<ConsultaModel> findByDataConsulta(LocalDateTime inicio, LocalDateTime fim);
+    @Query("SELECT c FROM ConsultaModel c WHERE c.data BETWEEN :inicio AND :fim")
+    List<ConsultaModel> findByDataConsulta(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 
-    //Buscar pelo CPF do paciente
-    List<ConsultaModel> findByCpfPaciente(String cpfPaciente);
 
 }

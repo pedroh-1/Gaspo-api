@@ -1,6 +1,6 @@
-package com.gaspo.api.repository;
+package com.gaspo.api.repository.esus;
 
-import com.gaspo.api.model.AgendaModel;
+import com.gaspo.api.model.esus.AgendaModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

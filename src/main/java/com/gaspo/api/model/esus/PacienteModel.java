@@ -1,4 +1,4 @@
-package com.gaspo.api.model;
+package com.gaspo.api.model.esus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
