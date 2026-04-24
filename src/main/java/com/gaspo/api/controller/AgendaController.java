@@ -1,7 +1,7 @@
-/*package com.gaspo.api.controller;
+package com.gaspo.api.controller;
 
-import com.gaspo.api.model.AgendaModel;
-import com.gaspo.api.repository.AgendaRepository;
+import com.gaspo.api.model.esus.AgendaModel;
+import com.gaspo.api.repository.esus.AgendaRepository;
 import com.gaspo.api.service.AgendaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,4 +53,3 @@ public class AgendaController {
         return ResponseEntity.ok(agendaService.salvar(agenda));
     }
 }
-*/
