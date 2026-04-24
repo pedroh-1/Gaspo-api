@@ -1,5 +1,6 @@
 package com.gaspo.api.controller;
 
+import com.gaspo.api.model.ProfissionalModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,11 @@ public class ProfissionalController {
 
     // Rota: GET /api/profissionais
     @GetMapping
-    public List<?> listarTodos() {
+    public List<ProfissionalModel> listarTodos() {
         // Substitua o '?' pelo seu Model/Entity de Profissional
         // return repository.findAll();
 
         return List.of(); // Retorno vazio temporário para não dar erro de compilação
     }
 }
+//Aqui nos vamos fazer igual do Junior deixando o Controller como porta de entrada?
