@@ -12,7 +12,7 @@ public class LotacaoModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_prof")
-    private ProfissionalModel profissional;
+    private ProfessionalModel profissional;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_unidade_saude")
@@ -32,11 +32,11 @@ public class LotacaoModel {
         this.id = id;
     }
 
-    public ProfissionalModel getProfissional() {
+    public ProfessionalModel getProfissional() {
         return profissional;
     }
 
-    public void setProfissional(ProfissionalModel profissional) {
+    public void setProfissional(ProfessionalModel profissional) {
         this.profissional = profissional;
     }
 

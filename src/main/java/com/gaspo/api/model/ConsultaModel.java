@@ -22,7 +22,7 @@ public class ConsultaModel {
 
     @ManyToOne
     @JoinColumn(name = "co_seq_profissional")
-    private ProfissionalModel profissional;
+    private ProfessionalModel profissional;
 
     public ConsultaModel(){}
 
@@ -50,11 +50,11 @@ public class ConsultaModel {
         this.status = status;
     }
 
-    public ProfissionalModel getProfissional(){
+    public ProfessionalModel getProfissional(){
         return profissional;
     }
 
-    public void setProfissional(ProfissionalModel profissional){
+    public void setProfissional(ProfessionalModel profissional){
         this.profissional = profissional;
     }
 
