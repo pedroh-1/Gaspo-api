@@ -43,13 +43,11 @@ public class AgendaController {
     }
     @DeleteMapping("/{id}") // Adicione o /{id} aqui!
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        agendaService.deletar(id);
-        return ResponseEntity.noContent().build();
+        agendaService.deletarPorId(id);        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AgendaModel> atualizarAgenda(@PathVariable Long id, @RequestBody AgendaModel agenda){
-        agenda.setDisponibilidade(agenda.getDisponibilidade());
-        return ResponseEntity.ok(agendaService.salvar(agenda));
+        return ResponseEntity.ok(agendaService.salvar(agenda);
     }
 }
