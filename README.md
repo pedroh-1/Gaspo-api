@@ -34,21 +34,27 @@ Como o projeto utiliza dois bancos de dados, você deve configurar o arquivo src
 
 Properties
 ## Configuração Banco e-SUS (Porta 5433)
+````text
 esus.datasource.url=jdbc:postgresql://localhost:5433/esus
 esus.datasource.username=postgres
 esus.datasource.password=SUA_SENHA_AQUI
 esus.datasource.driver-class-name=org.postgresql.Driver
+````
 
 ## Configuração Banco GASPO (Porta 5432)
+````text
 gaspo.datasource.url=jdbc:postgresql://localhost:5432/gaspo_db
 gaspo.datasource.username=postgres
 gaspo.datasource.password=SUA_SENHA_AQUI
 gaspo.datasource.driver-class-name=org.postgresql.Driver
+````
 
 ## JPA e Hibernate
+````text
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 Nota: Certifique-se de substituir SUA_SENHA_AQUI pela senha real do seu PostgreSQL.
+````
 
 ## 🚀 Instruções de Execução
 1. Pré-requisitos
@@ -87,5 +93,5 @@ Documentação (Swagger): http://localhost:8081/swagger-ui.html
 Ao criar novos Models: Sempre verifique em qual pacote (esus ou gaspo) a classe deve ficar e se o pacote correspondente está escaneado no arquivo Config (ex: EsusConfig.java).
 
 Ao criar novos Repositories: Certifique-se de que o nome da interface é único no projeto (ex: PacienteEsusRepository e PacienteGaspoRepository) para evitar conflitos de Bean no Spring.
-
+##
 Desenvolvido como projeto acadêmico - IF Goiano.
