@@ -1,27 +1,22 @@
-**Gaspo-api**
+# Gaspo-api
 
-Sistema de integração e gestão de dados de saúde, projetado para atuar como ponte entre a base de dados do e-SUS APS e o sistema interno GASPO, otimizando a consulta de dados e o gerenciamento de registros de pacientes, profissionais e agendamentos.
+Sistema de integração e gestão de dados de saúde, desenvolvido para conectar o banco de dados oficial do **e-SUS APS** ao sistema interno **GASPO**, permitindo uma operação unificada e eficiente.
 
-🛠 Tecnologias Utilizadas
-Este projeto foi desenvolvido utilizando as seguintes tecnologias e frameworks:
+## 🛠 Tecnologias Utilizadas
+* **Linguagem:** Java 21 (OpenJDK 23)
+* **Framework:** Spring Boot 3.4.0
+* **Persistência:** Spring Data JPA (Hibernate 6.6.2)
+* **Banco de Dados:** PostgreSQL 16
+* **Gerenciador de Dependências:** Maven
+* **Documentação:** Springdoc OpenAPI (Swagger UI)
+* **Utilitários:** Lombok
 
-Linguagem: Java 
+## 📂 Descrição da Estrutura
+O projeto utiliza uma arquitetura de múltiplos *datasources* para separar os dados legados (e-SUS) dos dados operacionais do sistema (GASPO).
 
-Framework: Spring Boot 3.4.0
-
-Persistência: Spring Data JPA (Hibernate 6.6.2)
-
-Banco de Dados: PostgreSQL 16
-
-Documentação de API: Springdoc OpenAPI (Swagger UI 2.8.5)
-
-Gerenciador de Dependências: Maven
-
-📂 Descrição da Estrutura
-O projeto foi estruturado para suportar o acesso a múltiplos bancos de dados simultaneamente (e-SUS e GASPO), utilizando pacotes para segregar as responsabilidades:
-
-src/main/java/com/gaspo/api/ 
-├── config/             # Configurações de conexão (EsusConfig, GaspoConfig) 
+```text
+src/main/java/com/gaspo/api/
+├── config/             # Configurações de conexão (EsusConfig, GaspoConfig)
 ├── controller/         # Endpoints da API (REST)
 ├── model/              # Entidades do Banco de Dados
 │   ├── esus/           # Tabelas herdadas/integradas (Consulta, Paciente, Profissional)
@@ -30,71 +25,67 @@ src/main/java/com/gaspo/api/
 │   ├── esus/           # Repositórios do banco e-SUS
 │   └── gaspo/          # Repositórios do banco GASPO
 └── service/            # Regras de negócio e orquestração
+    └── enums/          # Classes de Status e tipos fixos
 
-🚀 Instruções de Execução
-Pré-requisitos
-JDK 21 ou superior instalado na máquina.
+````
 
-PostgreSQL instalado e rodando.
+## ⚙️ Configurações Necessárias
+Como o projeto utiliza dois bancos de dados, você deve configurar o arquivo src/main/resources/application.properties com as credenciais corretas para ambos:
 
-Maven instalado (ou uso do wrapper do projeto).
+Properties
+## Configuração Banco e-SUS (Porta 5433)
+esus.datasource.url=jdbc:postgresql://localhost:5433/esus
+esus.datasource.username=postgres
+esus.datasource.password=SUA_SENHA_AQUI
+esus.datasource.driver-class-name=org.postgresql.Driver
 
-IDE de sua preferência (IntelliJ IDEA recomendado).
+## Configuração Banco GASPO (Porta 5432)
+gaspo.datasource.url=jdbc:postgresql://localhost:5432/gaspo_db
+gaspo.datasource.username=postgres
+gaspo.datasource.password=SUA_SENHA_AQUI
+gaspo.datasource.driver-class-name=org.postgresql.Driver
 
-Configuração do Banco de Dados
-Certifique-se de que os dois bancos de dados existam no seu servidor PostgreSQL local:
+## JPA e Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+Nota: Certifique-se de substituir SUA_SENHA_AQUI pela senha real do seu PostgreSQL.
 
-esus (para dados legados).
+## 🚀 Instruções de Execução
+1. Pré-requisitos
+Ter o PostgreSQL instalado e rodando com as bases criadas (esus e gaspo_db).
 
-gaspo_db (para dados do seu sistema).
+Ter o JDK 21+ configurado na sua IDE.
 
-Configure as credenciais (usuário e senha) nos arquivos de configuração (application.properties ou diretamente nos seus arquivos Config.java).
+Maven configurado.
 
-Como rodar o projeto
+2. Passo a Passo
 Clone o repositório:
 
 Bash
-git clone <link-do-seu-repositorio>
-cd Gaspo-api
-Compile o projeto:
+git clone <link-do-seu-projeto>
+Atualize as dependências:
+No IntelliJ, clique com o botão direito no arquivo pom.xml > Maven > Reload Project.
+
+Configure o Banco:
+Verifique no seu DataGrip/DBeaver se a senha configurada no application.properties consegue conectar em ambos os bancos.
+
+Executar:
+
+No IntelliJ, clique no ícone de "Play" na classe GaspoApplication.java.
+
+Ou, via terminal, dentro da pasta do projeto:
 
 Bash
-mvn clean install
-Execute a aplicação:
+mvn spring-boot:run
+Acesso:
 
-Via Terminal: mvn spring-boot:run
+API: http://localhost:8081
 
-Via IntelliJ: Clique no ícone de "Play" na classe GaspoApplication.java.
+Documentação (Swagger): http://localhost:8081/swagger-ui.html
 
-Acesse a API:
+## ⚠️ Dicas de Manutenção
+Ao criar novos Models: Sempre verifique em qual pacote (esus ou gaspo) a classe deve ficar e se o pacote correspondente está escaneado no arquivo Config (ex: EsusConfig.java).
 
-Com o servidor rodando, acesse http://localhost:8081 (verifique a porta definida no seu application.properties).
-
-A documentação da API (Swagger) estará disponível em: http://localhost:8081/swagger-ui.html.
-
-
-📝 Notas de Desenvolvimento
-Integração: Este sistema utiliza arquitetura de multi-datasource. Certifique-se de que as entidades estejam no pacote correto (model/esus ou model/gaspo) para que o Hibernate consiga gerenciar as tabelas corretamente nos seus respectivos bancos.
-
-Enums: Classes de enumeração (StatusConsulta, StatusProfissional) estão localizadas em com.gaspo.api.model.enums para acesso global.
+Ao criar novos Repositories: Certifique-se de que o nome da interface é único no projeto (ex: PacienteEsusRepository e PacienteGaspoRepository) para evitar conflitos de Bean no Spring.
 
 Desenvolvido como projeto acadêmico - IF Goiano.
-
-
-
-
-
-
-
-Datas:
-
-15/05 Projeto Interface
-
-29/05 
-
-12/06 Entrega do Backend
-
-26/06 Correção e Ajuste
-
-![Uploading image.png…]()
-
