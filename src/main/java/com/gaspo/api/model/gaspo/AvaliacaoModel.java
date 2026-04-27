@@ -17,19 +17,18 @@ public class AvaliacaoModel {
     @Column(length = 500)
     private String comentario; //
 
-    @ManyToOne
     @JoinColumn(name = "co_seq_cidadao")
-    private PacienteModel paciente; // Relacionamento com Paciente
+    private Long pacienteId; // Relacionamento com Paciente
 
     // Construtor vazio obrigatório para o JPA
     public AvaliacaoModel() {
     }
 
     // Construtor completo para facilitar o uso no Service/Controller
-    public AvaliacaoModel(int nota, String comentario, PacienteModel paciente) {
+    public AvaliacaoModel(int nota, String comentario, Long pacienteId) {
         this.nota = nota;
         this.comentario = comentario;
-        this.paciente = paciente;
+        this.pacienteId = pacienteId;
     }
 
     // --- Getters e Setters ---
@@ -58,11 +57,11 @@ public class AvaliacaoModel {
         this.comentario = comentario;
     }
 
-    public PacienteModel getPaciente() {
-        return paciente;
+    public Long getPacienteId() {
+        return pacienteId;
     }
 
-    public void setPaciente(PacienteModel paciente) {
-        this.paciente = paciente;
+    public void setPacienteId(Long pacienteId) {
+        this.pacienteId = pacienteId;
     }
 }

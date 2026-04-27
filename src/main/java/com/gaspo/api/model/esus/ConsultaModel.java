@@ -1,17 +1,22 @@
 package com.gaspo.api.model.esus;
 
 import com.gaspo.api.model.enums.StatusConsulta;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "tb_agendado", schema = "public")
+@Data
+@NoArgsConstructor
 public class ConsultaModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "co_seg_agendado")
+    @Column(name = "co_seq_agendado")
     private Long id;
 
     @Column(name = "dt_agendado", nullable = false)
@@ -21,42 +26,9 @@ public class ConsultaModel {
     @Column(name = "st_agendamento", nullable = false)
     private StatusConsulta status;
 
-    @ManyToOne
-    @JoinColumn(name = "co_seq_profissional")
-    private ProfissionalModel profissional;
-
-    public ConsultaModel(){}
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getData() {
-        return data;
-    }
-
-    public void setData(Date data) {
-        this.data = data;
-    }
-
-    public StatusConsulta getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusConsulta status) {
-        this.status = status;
-    }
-
-    public ProfissionalModel getProfissional(){
-        return profissional;
-    }
-
-    public void setProfissional(ProfissionalModel profissional){
-        this.profissional = profissional;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "co_ator_papel") // Esta é a coluna real no e-SUS
+    @JsonIgnoreProperties("consultas")
+    private LotacaoModel lotacao;
 
 }

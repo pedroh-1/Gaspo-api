@@ -11,16 +11,13 @@ import java.util.List;
 
 public interface ConsultaRepository extends JpaRepository<ConsultaModel, Long> {
 
-
-    //Buscar consultas por status
+    // Buscar consultas por status
     List<ConsultaModel> findByStatus(StatusConsulta status);
 
-    //Buscar consultas de um profissional
-    List<ConsultaModel> findByProfissionalId(Long profissionalId);
+    // Buscar consultas de um profissional através da lotação
+    List<ConsultaModel> findByLotacaoProfissionalId(Long profissionalId);
 
-    //Buscar consultas em um intervalo de tempo
+    // Buscar consultas em um intervalo de tempo
     @Query("SELECT c FROM ConsultaModel c WHERE c.data BETWEEN :inicio AND :fim")
     List<ConsultaModel> findByDataConsulta(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
-
-
 }

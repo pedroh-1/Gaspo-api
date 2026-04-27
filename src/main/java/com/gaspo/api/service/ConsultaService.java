@@ -25,7 +25,7 @@ public class ConsultaService {
     public ConsultaModel realizarAgendamento(ConsultaModel consulta) {
 
         //validação do profissional
-        if (!profissionalRepository.existsById(consulta.getProfissional().getId())) {
+        if (!profissionalRepository.existsById(consulta.getLotacao().getId())) {
             throw new RuntimeException("Profissional não foi encontrado no sistema!");
         }
 

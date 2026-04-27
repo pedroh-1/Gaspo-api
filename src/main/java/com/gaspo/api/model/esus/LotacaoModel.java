@@ -1,9 +1,18 @@
 package com.gaspo.api.model.esus;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "tb_lotacao", schema = "public")
+@Getter
+@Setter
+@NoArgsConstructor
 public class LotacaoModel {
 
     @Id
@@ -12,47 +21,17 @@ public class LotacaoModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_prof")
+    @JsonIgnoreProperties({"lotacoes", "consultas"})
     private ProfissionalModel profissional;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "co_unidade_saude")
     private UnidadeSaudeModel unidadeSaude;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "co_cbo")
-    private CboModel cbo;
+    @Column(name = "co_cbo")
+    private String codigoCbo;
 
-    // GETTERS E SETTERS
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ProfissionalModel getProfissional() {
-        return profissional;
-    }
-
-    public void setProfissional(ProfissionalModel profissional) {
-        this.profissional = profissional;
-    }
-
-    public UnidadeSaudeModel getUnidadeSaude() {
-        return unidadeSaude;
-    }
-
-    public void setUnidadeSaude(UnidadeSaudeModel unidadeSaude) {
-        this.unidadeSaude = unidadeSaude;
-    }
-
-    public CboModel getCbo() {
-        return cbo;
-    }
-
-    public void setCbo(CboModel cbo) {
-        this.cbo = cbo;
-    }
+    @OneToMany(mappedBy = "lotacao", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("lotacao")
+    private List<ConsultaModel> consultas;
 }

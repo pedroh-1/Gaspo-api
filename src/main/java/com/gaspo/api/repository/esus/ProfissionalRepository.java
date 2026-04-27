@@ -10,13 +10,8 @@ import java.util.List;
 public interface ProfissionalRepository
         extends JpaRepository<ProfissionalModel, Long> {
 
-    @Query("""
-        SELECT p
-        FROM ProfissionalModel p
-        JOIN LotacaoModel l ON l.profissional.id = p.id
-        WHERE l.unidadeSaude.id = :unidadeId
-    """)
-    List<ProfissionalModel> buscarPorUnidade(
-            @Param("unidadeId") Long unidadeId
-    );
+    @Query(value = "SELECT DISTINCT p.* FROM tb_prof p " +
+                   "JOIN tb_lotacao l ON p.co_seq_prof = l.co_prof " +
+                   "WHERE l.co_unidade_saude = :unidadeId", nativeQuery = true)
+    List<ProfissionalModel> buscarPorUnidade(@Param("unidadeId") Long unidadeId);
 }

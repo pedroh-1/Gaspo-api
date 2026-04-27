@@ -36,7 +36,7 @@ public class AvaliacaoController {
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
 
         // Converte Request -> Model
-        AvaliacaoModel avaliacao = new AvaliacaoModel(request.nota(), request.comentario(), paciente);
+        AvaliacaoModel avaliacao = new AvaliacaoModel(request.nota(), request.comentario(), request.pacienteId());
         AvaliacaoModel salva = avaliacaoService.salvar(avaliacao);
 
         // Converte Model -> Response

@@ -38,7 +38,7 @@ public class GaspoConfig {
             EntityManagerFactoryBuilder builder,
             @Qualifier("gaspoDataSource") DataSource dataSource) {
         return builder.dataSource(dataSource)
-                .packages("com.gaspo.api.model")
+                .packages("com.gaspo.api.model.gaspo")
                 .persistenceUnit("gaspo")
                 .build();
     }

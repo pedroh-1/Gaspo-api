@@ -1,35 +1,36 @@
 package com.gaspo.api.model.esus;
 
 import com.gaspo.api.model.enums.StatusProfissional;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
+
 import java.util.List;
 
 @Entity
-@Table(name = "tb_profissional")
-@Data // gera getters, setters e hashCode automaticamente
-@NoArgsConstructor // vai gerar o construtor vazio obrigatório para o JPA
+@Table(name = "tb_prof")
+@Getter
+@Setter
+@NoArgsConstructor
 public class ProfissionalModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "co_seq_prof")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "no_profissional", nullable = false)
     private String nome;
 
-    @Column(nullable = false)
+    @Formula("(SELECT c.no_cbo FROM tb_lotacao l JOIN tb_cbo c ON l.co_cbo = c.co_cbo WHERE l.co_prof = co_seq_prof LIMIT 1)")
     private String especialidade;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StatusProfissional status;
+    @Transient
+    private StatusProfissional status = StatusProfissional.ATENDENDO;
 
-    @ManyToOne
-    @JoinColumn(name = "co_unidade_saude")
-    private UnidadeSaudeModel unidadeSaude;
-
-    @OneToMany(mappedBy = "profissional")
-    private List<ConsultaModel> consultas;
+    @OneToMany(mappedBy = "profissional", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("profissional")
+    private List<LotacaoModel> lotacoes;
 }

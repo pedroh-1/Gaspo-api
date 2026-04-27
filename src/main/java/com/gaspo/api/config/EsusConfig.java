@@ -3,7 +3,8 @@ package com.gaspo.api.config;
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,14 +25,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class EsusConfig {
 
     @Primary
+    @Bean
+    @ConfigurationProperties("spring.datasource")
+    public DataSourceProperties esusDataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    @Primary
     @Bean(name = "esusDataSource")
     public DataSource esusDataSource() {
-        return DataSourceBuilder.create()
-                .url("jdbc:postgresql://localhost:5433/esus")
-                .username("postgres")
-                .password("EB0o8cV{HhKFY7{}1W+E#lg6@GGp")
-                .driverClassName("org.postgresql.Driver")
-                .build();
+        return esusDataSourceProperties().initializeDataSourceBuilder().build();
     }
 
     @Primary
@@ -41,7 +44,7 @@ public class EsusConfig {
             @Qualifier("esusDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("com.gaspo.api.model.esus") // Ajustado para o pacote existente
+                .packages("com.gaspo.api.model.esus")
                 .persistenceUnit("esus")
                 .build();
     }
