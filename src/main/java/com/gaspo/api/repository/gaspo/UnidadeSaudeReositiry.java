@@ -1,4 +1,0 @@
-package com.gaspo.api.repository.gaspo;
-
-public class UnidadeSaudeReositiry {
-}
