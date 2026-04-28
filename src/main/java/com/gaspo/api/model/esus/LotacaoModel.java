@@ -1,5 +1,6 @@
 package com.gaspo.api.model.esus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,14 +25,15 @@ public class LotacaoModel {
     @JsonIgnoreProperties({"lotacoes", "consultas"})
     private ProfissionalModel profissional;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_unidade_saude")
+    @JsonIgnoreProperties("lotacoes")
     private UnidadeSaudeModel unidadeSaude;
 
     @Column(name = "co_cbo")
     private String codigoCbo;
 
     @OneToMany(mappedBy = "lotacao", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("lotacao")
+    @JsonIgnore
     private List<ConsultaModel> consultas;
 }

@@ -1,5 +1,6 @@
 package com.gaspo.api.model.esus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gaspo.api.model.enums.StatusProfissional;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -30,7 +31,7 @@ public class ProfissionalModel {
     @Transient
     private StatusProfissional status = StatusProfissional.ATENDENDO;
 
-    @OneToMany(mappedBy = "profissional", fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("profissional")
+    @OneToMany(mappedBy = "profissional", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<LotacaoModel> lotacoes;
 }
