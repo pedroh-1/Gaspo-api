@@ -27,7 +27,7 @@ public class ConsultaModel {
     private StatusConsulta status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "co_ator_papel") // Esta é a coluna real no e-SUS
+    @JoinColumn(name = "co_lotacao") 
     @JsonIgnoreProperties("consultas")
     private LotacaoModel lotacao;
 
