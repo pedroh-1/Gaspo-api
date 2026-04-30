@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 
@@ -31,6 +33,10 @@ public class FuncionarioModel {
 
     @Column(name = "dt_admissao")
     private LocalDate dataAdmissao;
+
+    @ManyToOne
+    @JoinColumn(name = "unidade_saude_id")
+    private UnidadeSaudeModel unidadeSaude;
 
     // Construtor vazio obrigatório para o JPA
     public FuncionarioModel() {
@@ -84,5 +90,13 @@ public class FuncionarioModel {
 
     public void setDataAdmissao(LocalDate dataAdmissao) {
         this.dataAdmissao = dataAdmissao;
+    }
+
+    public UnidadeSaudeModel getUnidadeSaude() {
+        return unidadeSaude;
+    }
+
+    public void setUnidadeSaude(UnidadeSaudeModel unidadeSaude) {
+        this.unidadeSaude = unidadeSaude;
     }
 }

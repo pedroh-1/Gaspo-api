@@ -2,7 +2,7 @@ package com.gaspo.api.controller;
 
 import com.gaspo.api.model.gaspo.AvisoModel;
 import com.gaspo.api.service.AvisoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,18 +10,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/avisos")
-
+@RequiredArgsConstructor
 public class AvisoController {
-    @Autowired
-private AvisoService service;
+
+    private final AvisoService service;
 
     /**
      * Rota: GET /api/avisos
-     * Lista todos os avisos registados.
+     * Lista todos os avisos registrados.
      */
     @GetMapping
-    public List<AvisoModel> listarTodos() {
-        return service.listarTodos();
+    public ResponseEntity<List<AvisoModel>> listarTodos() {
+        return ResponseEntity.ok(service.listarTodos());
     }
 
     /**
@@ -29,8 +29,8 @@ private AvisoService service;
      * Retorna apenas os avisos que estão marcados como ativos.
      */
     @GetMapping("/ativos")
-    public List<AvisoModel> listarAtivos() {
-        return service.listarAtivos();
+    public ResponseEntity<List<AvisoModel>> listarAtivos() {
+        return ResponseEntity.ok(service.listarAtivos());
     }
 
     /**
@@ -38,7 +38,7 @@ private AvisoService service;
      * Cria um novo aviso no sistema.
      */
     @PostMapping
-    public AvisoModel criar(@RequestBody AvisoModel aviso) {
-        return service.salvar(aviso);
+    public ResponseEntity<AvisoModel> criar(@RequestBody AvisoModel aviso) {
+        return ResponseEntity.status(201).body(service.salvar(aviso));
     }
 }

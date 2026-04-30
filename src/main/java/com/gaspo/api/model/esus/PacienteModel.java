@@ -1,74 +1,34 @@
 package com.gaspo.api.model.esus;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "tb_cidadao", schema = "public") // ATENÇÃO: Substitua "tb_cidadao" pelo nome exato da tabela no e-SUS
+@Table(name = "tb_cidadao", schema = "public")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PacienteModel {
 
     @Id
-    @Column(name = "co_seq_cidadao") // Substitua pelo nome exato da chave primária
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "co_seq_cidadao")
     private Long id;
 
-    @Column(name = "no_cidadao") // Substitua pelo nome da coluna que guarda o nome
+    @Column(name = "no_cidadao", nullable = false)
     private String nome;
 
-    @Column(name = "nu_cpf") // Exemplo de coluna para CPF
+    @Column(name = "nu_cpf", unique = true)
     private String cpf;
 
-    @Column(name = "nu_cns") // Exemplo de coluna para o Cartão Nacional de Saúde (CNS)
+    @Column(name = "nu_cns")
     private String cns;
 
-    @Column(name = "dt_nascimento") // Exemplo de coluna para a data de nascimento
+    @Column(name = "dt_nascimento")
     private LocalDate dataNascimento;
-
-    // Construtor vazio (obrigatório para o JPA/Hibernate)
-    public PacienteModel() {
-    }
-
-    // --- Getters e Setters ---
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getCns() {
-        return cns;
-    }
-
-    public void setCns(String cns) {
-        this.cns = cns;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
 }
