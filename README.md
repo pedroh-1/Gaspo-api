@@ -87,7 +87,7 @@ Acesso:
 
 API: http://localhost:8081
 
-Documentação (Swagger): http://localhost:8081/swagger-ui.html
+Documentação (Swagger): http://localhost:8081/swagger-ui/index.html
 
 ## ⚠️ Dicas de Manutenção
 Ao criar novos Models: Sempre verifique em qual pacote (esus ou gaspo) a classe deve ficar e se o pacote correspondente está escaneado no arquivo Config (ex: EsusConfig.java).
