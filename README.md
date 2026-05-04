@@ -18,6 +18,7 @@ O projeto utiliza uma arquitetura de múltiplos *datasources* para separar os da
 src/main/java/com/gaspo/api/
 ├── config/             # Configurações de conexão (EsusConfig, GaspoConfig)
 ├── controller/         # Endpoints da API (REST)
+├── dto/                # Padrão de Projeto 
 ├── model/              # Entidades do Banco de Dados
 │   ├── esus/           # Tabelas herdadas/integradas (Consulta, Paciente, Profissional)
 │   └── gaspo/          # Tabelas próprias do sistema (Avaliacao, Notificacao)
