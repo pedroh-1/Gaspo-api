@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class UsuarioModel {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "co_seq_usuario")
     private Long id;
 
@@ -22,9 +23,13 @@ public class UsuarioModel {
     @Column(name = "nu_cpf", unique = true)
     private String cpf;
 
-    @Column(name = "ds_email", unique = true)
+    @Column(name = "ds_email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "ds_senha")
+    @Column(name = "ds_senha", nullable = false)
     private String senha;
+
+    // Relacionamento lógico com o banco do e-SUS
+    @Column(name = "co_seq_cidadao_esus", nullable = false, unique = true)
+    private Long idCidadaoEsus;
 }

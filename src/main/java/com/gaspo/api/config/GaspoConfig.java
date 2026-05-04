@@ -37,9 +37,14 @@ public class GaspoConfig {
     public LocalContainerEntityManagerFactoryBean gaspoEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
             @Qualifier("gaspoDataSource") DataSource dataSource) {
+        
+        java.util.Map<String, Object> properties = new java.util.HashMap<>();
+        properties.put("hibernate.hbm2ddl.auto", "update");
+
         return builder.dataSource(dataSource)
                 .packages("com.gaspo.api.model.gaspo")
                 .persistenceUnit("gaspo")
+                .properties(properties)
                 .build();
     }
 
