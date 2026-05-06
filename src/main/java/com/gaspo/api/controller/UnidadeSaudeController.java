@@ -1,24 +1,21 @@
 package com.gaspo.api.controller;
 
-import com.gaspo.api.model.esus.UnidadeSaudeModel;
-import com.gaspo.api.repository.esus.UnidadeSaudeRepository;
+import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
+import com.gaspo.api.service.UnidadeSaudeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api/unidades")
+@RequestMapping("/api/unidades-saude")
 public class UnidadeSaudeController {
 
     @Autowired
-    private UnidadeSaudeRepository repository;
+    private UnidadeSaudeService service;
 
     @GetMapping
-    public List<UnidadeSaudeModel> listarTodas() {
-        return repository.findAll(); // Vai no banco e traz tudo formatado em JSON!
+    public List<UnidadeSaudeModel> exibirInformacoes() {
+        return service.exibirInformacoes();
     }
 }

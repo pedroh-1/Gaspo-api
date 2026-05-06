@@ -1,44 +1,32 @@
 package com.gaspo.api.model.gaspo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.time.LocalDate;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tb_funcionario", schema = "public") // ATENÇÃO: Verifique o nome real da tabela no banco
+@Table(name = "tb_funcionario")
 public class FuncionarioModel {
 
+    // Atributos herdados de Pessoa
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "co_seq_funcionario") // Nome comum para chaves primárias no padrão e-SUS
     private Long id;
 
     @Column(name = "no_funcionario", nullable = false)
     private String nome;
 
-    @Column(name = "nu_cpf", unique = true)
-    private String cpf;
+    @Column(name = "ds_email", unique = true)
+    private String email;
 
-    @Column(name = "nu_matricula")
-    private String matricula;
+    @Column(name = "nu_telefone")
+    private String telefone;
 
+    @Column(name = "ds_senha", nullable = false)
+    private String senha;
+
+    // Atributo específico de Funcionario
     @Column(name = "ds_cargo")
     private String cargo;
 
-    @Column(name = "dt_admissao")
-    private LocalDate dataAdmissao;
-
-    @ManyToOne
-    @JoinColumn(name = "unidade_saude_id")
-    private UnidadeSaudeModel unidadeSaude;
-
-    // Construtor vazio obrigatório para o JPA
     public FuncionarioModel() {
     }
 
@@ -60,20 +48,28 @@ public class FuncionarioModel {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getEmail() {
+        return email;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getMatricula() {
-        return matricula;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setMatricula(String matricula) {
-        this.matricula = matricula;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public String getCargo() {
@@ -82,21 +78,5 @@ public class FuncionarioModel {
 
     public void setCargo(String cargo) {
         this.cargo = cargo;
-    }
-
-    public LocalDate getDataAdmissao() {
-        return dataAdmissao;
-    }
-
-    public void setDataAdmissao(LocalDate dataAdmissao) {
-        this.dataAdmissao = dataAdmissao;
-    }
-
-    public UnidadeSaudeModel getUnidadeSaude() {
-        return unidadeSaude;
-    }
-
-    public void setUnidadeSaude(UnidadeSaudeModel unidadeSaude) {
-        this.unidadeSaude = unidadeSaude;
     }
 }
