@@ -1,6 +1,8 @@
 package com.gaspo.api.controller;
 
-import com.gaspo.api.model.esus.ConsultaModel;
+import com.gaspo.api.dto.request.AgendamentoPorNomeDTO;
+import com.gaspo.api.dto.request.ConsultaRequestDTO;
+import com.gaspo.api.dto.response.ConsultaResponseDTO;
 import com.gaspo.api.service.ConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +19,14 @@ public class ConsultaController {
 
     // cria um agendamento
     @PostMapping
-    public ResponseEntity<ConsultaModel> agendar(@RequestBody ConsultaModel consulta){
-        ConsultaModel novaConsulta = consultaService.realizarAgendamento(consulta);
+    public ResponseEntity<ConsultaResponseDTO> agendar(@RequestBody AgendamentoPorNomeDTO consulta){
+        ConsultaResponseDTO novaConsulta = consultaService.prepararAgendamento(consulta);
         return ResponseEntity.ok(novaConsulta);
     }
 
     //Listar todas as consultas
     @GetMapping
-    public ResponseEntity<List<ConsultaModel>> listarTodas() {
+    public ResponseEntity<List<ConsultaResponseDTO>> listarTodas() {
         return ResponseEntity.ok(consultaService.listarTodas());
     }
 
@@ -33,6 +35,5 @@ public class ConsultaController {
         consultaService.cancelarConsulta(id);
         return ResponseEntity.ok("Consulta " + id + " cancelada om sucesso");
     }
-
 
 }
