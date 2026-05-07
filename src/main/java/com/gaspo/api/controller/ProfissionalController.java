@@ -39,35 +39,9 @@ public class ProfissionalController {
     }
 
     //Rota para atualizar o status de atendimento(funcionário)
-    @PatchMapping("/status")
-    public ResponseEntity<StatusProfissionalResponseDTO> atualizarStatus(
-            @RequestBody @Valid StatusProfissionalRequestDTO request) {
-
-        ProfissionalModel atualizado = service.atualizarStatus(
-                request.profissionalId(),
-                request.novoStatus()
-        );
-
-        //retorna o DTO de resposta para confirmação instantânea na interface
-        StatusProfissionalResponseDTO response = new StatusProfissionalResponseDTO(
-                atualizado.getId(),
-                atualizado.getNome(),
-                atualizado.getStatus()
-        );
-
-        return ResponseEntity.ok(response);
-    }
     //rota para criar novo profissional
-    @PostMapping
-    public ResponseEntity<ProfissionalModel> criar(@RequestBody ProfissionalModel profissional) {
-        ProfissionalModel novo = service.salvar(profissional);
-        return ResponseEntity.status(201).body(novo);
-    }
+
 
     //rota para remover profissional
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
-        service.excluir(id);
-        return ResponseEntity.noContent().build();
-    }
+
 }
