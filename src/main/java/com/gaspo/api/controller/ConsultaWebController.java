@@ -24,6 +24,7 @@ public class ConsultaWebController {
     @GetMapping("/agendar")
     public String exibirFormulario(Model model) {
         model.addAttribute("form", new ConsultaFormDTO());
+        model.addAttribute("lotacoes", consultaService.listarLotacoesResumo());
         return "agendar-consulta";
     }
 
@@ -48,6 +49,7 @@ public class ConsultaWebController {
             model.addAttribute("erro", "Erro ao agendar consulta: " + e.getMessage());
             e.printStackTrace();
         }
+        model.addAttribute("lotacoes", consultaService.listarLotacoesResumo());
         return "agendar-consulta";
     }
 }

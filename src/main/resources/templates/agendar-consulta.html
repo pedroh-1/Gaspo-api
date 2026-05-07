@@ -93,8 +93,14 @@
         </div>
 
         <div class="form-group">
-            <label for="lotacaoId">ID da Lotação (Profissional/Unidade):</label>
-            <input type="number" id="lotacaoId" th:field="*{lotacaoId}" placeholder="Ex: 6226" required />
+            <label for="lotacaoId">Profissional / Unidade de Saúde:</label>
+            <select id="lotacaoId" th:field="*{lotacaoId}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
+                <option value="" disabled selected>Selecione um profissional...</option>
+                <option th:each="lotacao : ${lotacoes}"
+                        th:value="${lotacao.id}"
+                        th:text="${lotacao.nomeProfissional} + ' - ' + (${lotacao.especialidadeProfissional} ?: 'Geral') + ' - ' + ${lotacao.nomeUnidade}">
+                </option>
+            </select>
         </div>
 
         <div class="form-group">

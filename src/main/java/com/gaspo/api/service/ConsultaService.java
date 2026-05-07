@@ -76,6 +76,17 @@ public class ConsultaService {
                 .collect(Collectors.toList());
     }
 
+    public List<LotacaoResumoDTO> listarLotacoesResumo() {
+        return lotacaoRepository.findAll().stream()
+                .map(model -> {
+                    String nomeProf = model.getProfissional() != null ? model.getProfissional().getNome() : "";
+                    String espProf = model.getProfissional() != null ? model.getProfissional().getEspecialidade() : "";
+                    String nomeUni = model.getUnidadeSaude() != null ? model.getUnidadeSaude().getNome() : "";
+                    return new LotacaoResumoDTO(model.getId(), nomeProf, espProf, nomeUni);
+                })
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void cancelarConsulta(Long id) {
         ConsultaModel consulta = consultaRepository.findById(id)
