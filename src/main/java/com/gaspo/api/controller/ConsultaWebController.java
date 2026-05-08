@@ -8,8 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,13 +25,12 @@ public class ConsultaWebController {
 
     @GetMapping("/agendar")
     public String exibirFormulario(Model model) {
-        model.addAttribute("form", new ConsultaFormDTO());
-        model.addAttribute("lotacoes", consultaService.listarLotacoesResumo());
+        preencherModelo(model, new ConsultaFormDTO());
         return "agendar-consulta";
     }
 
     @PostMapping("/agendar")
-    public String agendarConsulta(@ModelAttribute("form") ConsultaFormDTO form, Model model) {
+    public String agendarConsulta(@ModelAttribute("form") ConsultaFormDTO form, RedirectAttributes redirectAttributes) {
         try {
             // O input type="datetime-local" retorna no formato yyyy-MM-dd'T'HH:mm
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
@@ -42,14 +43,31 @@ public class ConsultaWebController {
             );
 
             consultaService.realizarAgendamento(requestDTO);
-            
-            model.addAttribute("mensagem", "Consulta agendada com sucesso!");
-            model.addAttribute("form", new ConsultaFormDTO()); // Limpa o formulário
+
+            redirectAttributes.addFlashAttribute("mensagem", "Consulta agendada com sucesso!");
         } catch (Exception e) {
-            model.addAttribute("erro", "Erro ao agendar consulta: " + e.getMessage());
-            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("erro", "Erro ao agendar consulta: " + e.getMessage());
         }
+
+        return "redirect:/web/consultas/agendar";
+    }
+
+    @PostMapping("/cancelar/{id}")
+    public String cancelarConsulta(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            consultaService.cancelarConsulta(id);
+            redirectAttributes.addFlashAttribute("mensagem", "Consulta cancelada com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao cancelar consulta: " + e.getMessage());
+        }
+
+        return "redirect:/web/consultas/agendar";
+    }
+
+    private void preencherModelo(Model model, ConsultaFormDTO form) {
+        model.addAttribute("form", form);
         model.addAttribute("lotacoes", consultaService.listarLotacoesResumo());
-        return "agendar-consulta";
+        model.addAttribute("agendamentosAtivos", consultaService.listarAgendamentosAtivos());
+        model.addAttribute("historico", consultaService.listarHistorico());
     }
 }

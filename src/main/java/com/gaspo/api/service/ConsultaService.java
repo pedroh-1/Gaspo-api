@@ -12,10 +12,12 @@ import com.gaspo.api.repository.esus.ConsultaRepository;
 import com.gaspo.api.repository.esus.LotacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,6 +62,18 @@ public class ConsultaService {
 
     public List<ConsultaResponseDTO> listarTodas() {
         return consultaRepository.findByStatus(STATUS_AGENDADO).stream()
+                .map(consultaMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ConsultaResponseDTO> listarAgendamentosAtivos() {
+        return consultaRepository.findAgendamentosAtivos(STATUS_AGENDADO, new Date()).stream()
+                .map(consultaMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ConsultaResponseDTO> listarHistorico() {
+        return consultaRepository.findHistorico(STATUS_AGENDADO, new Date(), PageRequest.of(0, 50)).stream()
                 .map(consultaMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }

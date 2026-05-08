@@ -1,117 +1,372 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendar Consulta</title>
-    <!-- Adicionando um pouco de CSS para deixar bonito -->
+    <title>Consultas</title>
     <style>
+        :root {
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --text: #1f2933;
+            --muted: #667085;
+            --border: #d6dbe1;
+            --primary: #1f7a5c;
+            --primary-hover: #176448;
+            --danger: #b42318;
+            --danger-hover: #8f1d14;
+            --danger-bg: #fce8e6;
+            --danger-text: #9b1c1c;
+            --success-bg: #e7f5ec;
+            --success-text: #176448;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
         }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
         }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
         h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
+            font-size: 18px;
+            margin-bottom: 16px;
         }
+
+        h3 {
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(300px, 380px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .stack {
+            display: grid;
+            gap: 24px;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 14px;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-weight: bold;
+            margin-bottom: 6px;
+            color: #344054;
+            font-size: 14px;
+            font-weight: 700;
         }
+
         input[type="datetime-local"],
-        input[type="number"] {
+        input[type="number"],
+        select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* Para não ultrapassar o width */
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text);
+            font: inherit;
+            background: #fff;
         }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid rgba(31, 122, 92, 0.18);
+            border-color: var(--primary);
+        }
+
         button {
-            width: 100%;
-            padding: 12px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border: 0;
+            border-radius: 6px;
+            padding: 11px 14px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
         }
-        button:hover {
-            background-color: #218838;
+
+        .button-primary {
+            width: 100%;
+            background: var(--primary);
         }
+
+        .button-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .button-danger {
+            background: var(--danger);
+        }
+
+        .button-danger:hover {
+            background: var(--danger-hover);
+        }
+
         .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            font-size: 14px;
         }
+
         .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #b8dfc5;
         }
+
         .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid #f3b7b0;
+        }
+
+        .cards {
+            display: grid;
+            gap: 12px;
+        }
+
+        .consultation {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            padding: 16px;
+        }
+
+        .consultation-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .date {
+            flex: 0 0 auto;
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .details {
+            display: grid;
+            gap: 4px;
+            margin: 0 0 12px;
+            color: #344054;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .details span {
+            overflow-wrap: anywhere;
+        }
+
+        .status {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 4px 8px;
+            background: #eef2f6;
+            color: #475467;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty {
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 22px;
+            color: var(--muted);
+            text-align: center;
+            background: #fff;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 860px) {
+            .page {
+                width: min(100% - 24px, 1180px);
+                padding: 20px 0;
+            }
+
+            .header,
+            .consultation-header {
+                display: block;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .date {
+                display: block;
+                margin-top: 4px;
+            }
         }
     </style>
 </head>
 <body>
+<main class="page">
+    <header class="header">
+        <div>
+            <h1>Consultas</h1>
+            <p class="subtitle">Agende, acompanhe consultas ativas e consulte o histórico.</p>
+        </div>
+    </header>
 
-<div class="container">
-    <h2>Agendamento de Consulta</h2>
-
-    <!-- Mensagens de Sucesso ou Erro -->
     <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
-    <form action="#" th:action="@{/web/consultas/agendar}" th:object="${form}" method="post">
-        
-        <div class="form-group">
-            <label for="data">Data e Hora da Consulta:</label>
-            <input type="datetime-local" id="data" th:field="*{data}" required />
+    <section class="layout">
+        <form class="panel" th:action="@{/web/consultas/agendar}" th:object="${form}" method="post">
+            <h2>Novo Agendamento</h2>
+
+            <div class="form-group">
+                <label for="data">Data e hora</label>
+                <input type="datetime-local" id="data" th:field="*{data}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lotacaoId">Profissional / Unidade</label>
+                <select id="lotacaoId" th:field="*{lotacaoId}" required>
+                    <option value="" disabled selected>Selecione um profissional</option>
+                    <option th:each="lotacao : ${lotacoes}"
+                            th:value="${lotacao.id}"
+                            th:text="${lotacao.nomeProfissional} + ' - ' + (${lotacao.especialidadeProfissional} ?: 'Geral') + ' - ' + ${lotacao.nomeUnidade}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="prontuarioId">ID do prontuário</label>
+                <input type="number" id="prontuarioId" th:field="*{prontuarioId}" placeholder="Ex: 2629" required>
+            </div>
+
+            <button class="button-primary" type="submit">Confirmar Agendamento</button>
+        </form>
+
+        <div class="stack">
+            <section class="panel">
+                <h2>Agendamento Ativo</h2>
+
+                <div th:if="${#lists.isEmpty(agendamentosAtivos)}" class="empty">
+                    Nenhuma consulta ativa.
+                </div>
+
+                <div th:unless="${#lists.isEmpty(agendamentosAtivos)}" class="cards">
+                    <article class="consultation" th:each="consulta : ${agendamentosAtivos}">
+                        <div class="consultation-header">
+                            <h3 th:text="${consulta.lotacao != null ? consulta.lotacao.nomeProfissional : 'Profissional não informado'}">
+                                Profissional
+                            </h3>
+                            <time class="date"
+                                  th:if="${consulta.data != null}"
+                                  th:text="${#dates.format(consulta.data, 'dd/MM/yyyy HH:mm')}">
+                                08/05/2026 10:00
+                            </time>
+                        </div>
+
+                        <div class="details">
+                            <span th:text="'Unidade: ' + (${consulta.lotacao != null ? consulta.lotacao.nomeUnidade : 'Não informada'})">Unidade</span>
+                            <span th:text="'Paciente: ' + (${consulta.prontuario != null ? consulta.prontuario.nomePaciente : 'Não informado'})">Paciente</span>
+                            <span th:text="'Prontuário: ' + (${consulta.prontuario != null ? consulta.prontuario.id : 'Não informado'})">Prontuário</span>
+                        </div>
+
+                        <span class="status">Agendada</span>
+
+                        <form class="actions"
+                              th:action="@{/web/consultas/cancelar/{id}(id=${consulta.id})}"
+                              method="post">
+                            <button class="button-danger" type="submit">Cancelar</button>
+                        </form>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h2>Histórico</h2>
+                <p class="subtitle" style="margin-bottom: 16px;">Últimos 50 registros encerrados ou vencidos.</p>
+
+                <div th:if="${#lists.isEmpty(historico)}" class="empty">
+                    Nenhuma consulta encontrada.
+                </div>
+
+                <div th:unless="${#lists.isEmpty(historico)}" class="cards">
+                    <article class="consultation" th:each="consulta : ${historico}">
+                        <div class="consultation-header">
+                            <h3 th:text="${consulta.lotacao != null ? consulta.lotacao.nomeProfissional : 'Profissional não informado'}">
+                                Profissional
+                            </h3>
+                            <time class="date"
+                                  th:if="${consulta.data != null}"
+                                  th:text="${#dates.format(consulta.data, 'dd/MM/yyyy HH:mm')}">
+                                08/05/2026 10:00
+                            </time>
+                        </div>
+
+                        <div class="details">
+                            <span th:text="'Unidade: ' + (${consulta.lotacao != null ? consulta.lotacao.nomeUnidade : 'Não informada'})">Unidade</span>
+                            <span th:text="'Paciente: ' + (${consulta.prontuario != null ? consulta.prontuario.nomePaciente : 'Não informado'})">Paciente</span>
+                            <span th:text="'Prontuário: ' + (${consulta.prontuario != null ? consulta.prontuario.id : 'Não informado'})">Prontuário</span>
+                        </div>
+
+                        <span class="status"
+                              th:text="${consulta.status == 0 ? 'Agendada' : (consulta.status == 4 ? 'Cancelada' : 'Status ' + consulta.status)}">
+                            Status
+                        </span>
+                    </article>
+                </div>
+            </section>
         </div>
-
-        <div class="form-group">
-            <label for="lotacaoId">Profissional / Unidade de Saúde:</label>
-            <select id="lotacaoId" th:field="*{lotacaoId}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
-                <option value="" disabled selected>Selecione um profissional...</option>
-                <option th:each="lotacao : ${lotacoes}"
-                        th:value="${lotacao.id}"
-                        th:text="${lotacao.nomeProfissional} + ' - ' + (${lotacao.especialidadeProfissional} ?: 'Geral') + ' - ' + ${lotacao.nomeUnidade}">
-                </option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="prontuarioId">ID do Prontuário do Paciente:</label>
-            <input type="number" id="prontuarioId" th:field="*{prontuarioId}" placeholder="Ex: 2629" required />
-        </div>
-
-        <button type="submit">Confirmar Agendamento</button>
-
-    </form>
-</div>
-
+    </section>
+</main>
 </body>
 </html>

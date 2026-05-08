@@ -4,14 +4,22 @@ import com.gaspo.api.model.esus.ConsultaModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public interface ConsultaRepository extends JpaRepository<ConsultaModel, Long> {
 
     // Buscar consultas por status
     List<ConsultaModel> findByStatus(Long status);
+
+    @Query("SELECT c FROM ConsultaModel c WHERE c.status = :status AND c.data >= :agora ORDER BY c.data ASC")
+    List<ConsultaModel> findAgendamentosAtivos(@Param("status") Long status, @Param("agora") Date agora);
+
+    @Query("SELECT c FROM ConsultaModel c WHERE c.status <> :statusAgendado OR c.data < :agora ORDER BY c.data DESC")
+    List<ConsultaModel> findHistorico(@Param("statusAgendado") Long statusAgendado, @Param("agora") Date agora, Pageable pageable);
 
     // Buscar consultas de um profissional através da lotação
     List<ConsultaModel> findByLotacaoProfissionalId(Long profissionalId);
