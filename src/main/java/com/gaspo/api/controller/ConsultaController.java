@@ -3,9 +3,11 @@ package com.gaspo.api.controller;
 import com.gaspo.api.dto.request.AgendamentoPorNomeDTO;
 import com.gaspo.api.dto.request.ConsultaRequestDTO;
 import com.gaspo.api.dto.response.ConsultaResponseDTO;
+import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.service.ConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +30,11 @@ public class ConsultaController {
     @GetMapping
     public ResponseEntity<List<ConsultaResponseDTO>> listarTodas() {
         return ResponseEntity.ok(consultaService.listarTodas());
+    }
+
+    @GetMapping("/meu-historico")
+    public ResponseEntity<List<ConsultaResponseDTO>> listarMeuHistorico(@AuthenticationPrincipal UsuarioModel usuarioLogado) {
+        return ResponseEntity.ok(consultaService.listarHistoricoDoUsuario(usuarioLogado));
     }
 
     @PutMapping("/cancelar/{id}")

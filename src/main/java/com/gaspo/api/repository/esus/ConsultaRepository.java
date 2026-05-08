@@ -16,6 +16,9 @@ public interface ConsultaRepository extends JpaRepository<ConsultaModel, Long> {
     // Buscar consultas de um profissional através da lotação
     List<ConsultaModel> findByLotacaoProfissionalId(Long profissionalId);
 
+    // Buscar consultas vinculadas ao paciente do prontuário
+    List<ConsultaModel> findByProntuarioPacienteIdOrderByDataDesc(Long pacienteId);
+
     // Buscar consultas em um intervalo de tempo
     @Query("SELECT c FROM ConsultaModel c WHERE c.data BETWEEN :inicio AND :fim")
     List<ConsultaModel> findByDataConsulta(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);

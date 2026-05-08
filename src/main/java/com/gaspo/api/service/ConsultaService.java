@@ -7,11 +7,14 @@ import com.gaspo.api.dto.response.LotacaoResumoDTO;
 import com.gaspo.api.mapper.ConsultaMapper;
 import com.gaspo.api.model.esus.ConsultaModel;
 import com.gaspo.api.model.esus.LotacaoModel;
+import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.repository.esus.ConsultaRepository;
 import com.gaspo.api.repository.esus.LotacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,6 +60,16 @@ public class ConsultaService {
 
     public List<ConsultaResponseDTO> listarTodas() {
         return consultaRepository.findByStatus(STATUS_AGENDADO).stream()
+                .map(consultaMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ConsultaResponseDTO> listarHistoricoDoUsuario(UsuarioModel usuarioLogado) {
+        if (usuarioLogado == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
+        }
+
+        return consultaRepository.findByProntuarioPacienteIdOrderByDataDesc(usuarioLogado.getIdCidadaoEsus()).stream()
                 .map(consultaMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
