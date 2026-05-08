@@ -1,7 +1,6 @@
 package com.gaspo.api.repository.esus;
 
 import com.gaspo.api.model.esus.ConsultaModel;
-import com.gaspo.api.model.enums.StatusConsulta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +11,7 @@ import java.util.List;
 public interface ConsultaRepository extends JpaRepository<ConsultaModel, Long> {
 
     // Buscar consultas por status
-    List<ConsultaModel> findByStatus(StatusConsulta status);
+    List<ConsultaModel> findByStatus(Long status);
 
     // Buscar consultas de um profissional através da lotação
     List<ConsultaModel> findByLotacaoProfissionalId(Long profissionalId);

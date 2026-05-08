@@ -19,9 +19,18 @@ public class AvisoService {
     }
 
     public AvisoModel publicar(AvisoModel aviso) {
+        if (aviso.getTitulo() == null || aviso.getTitulo().isBlank()) {
+            aviso.setTitulo("Aviso");
+        }
+
         if (aviso.getDataPublicacao() == null) {
             aviso.setDataPublicacao(new Date());
         }
+
+        if (aviso.getAtivo() == null) {
+            aviso.setAtivo(true);
+        }
+
         return repository.save(aviso);
     }
 

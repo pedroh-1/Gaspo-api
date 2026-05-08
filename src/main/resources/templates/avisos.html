@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avisos</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --text: #1f2933;
+            --muted: #667085;
+            --border: #d6dbe1;
+            --primary: #1f7a5c;
+            --primary-hover: #176448;
+            --danger-bg: #fce8e6;
+            --danger-text: #9b1c1c;
+            --success-bg: #e7f5ec;
+            --success-text: #176448;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: min(1040px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        h2 {
+            margin: 0 0 16px;
+            font-size: 18px;
+            line-height: 1.3;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #344054;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text);
+            font: inherit;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: 2px solid rgba(31, 122, 92, 0.18);
+            border-color: var(--primary);
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 2px 0 16px;
+            color: #344054;
+            font-size: 14px;
+        }
+
+        .checkbox input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+        }
+
+        button {
+            width: 100%;
+            border: 0;
+            border-radius: 6px;
+            padding: 12px 14px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        .alert {
+            border-radius: 6px;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #b8dfc5;
+        }
+
+        .alert-danger {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid #f3b7b0;
+        }
+
+        .notice-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .notice {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .notice h3 {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        .notice-date {
+            flex: 0 0 auto;
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .notice p {
+            margin: 0;
+            color: #344054;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 12px;
+            border-radius: 999px;
+            padding: 4px 8px;
+            background: #eef2f6;
+            color: #475467;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty {
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            color: var(--muted);
+            text-align: center;
+            background: #fff;
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                width: min(100% - 24px, 1040px);
+                padding: 20px 0;
+            }
+
+            .header {
+                display: block;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .notice-header {
+                display: block;
+            }
+
+            .notice-date {
+                display: block;
+                margin-top: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="header">
+        <div>
+            <h1>Avisos</h1>
+            <p class="subtitle">Publique comunicados e acompanhe os avisos disponíveis.</p>
+        </div>
+    </header>
+
+    <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <section class="layout">
+        <form class="panel" th:action="@{/web/avisos}" th:object="${aviso}" method="post">
+            <h2>Novo Aviso</h2>
+
+            <div class="form-group">
+                <label for="titulo">Título</label>
+                <input type="text" id="titulo" th:field="*{titulo}" maxlength="255" placeholder="Ex: Vacinação" required>
+            </div>
+
+            <div class="form-group">
+                <label for="mensagem">Mensagem</label>
+                <textarea id="mensagem" th:field="*{mensagem}" maxlength="1000" placeholder="Digite o conteúdo do aviso" required></textarea>
+            </div>
+
+            <label class="checkbox" for="ativo">
+                <input type="checkbox" id="ativo" th:field="*{ativo}" checked>
+                Ativo
+            </label>
+
+            <button type="submit">Publicar</button>
+        </form>
+
+        <div class="panel">
+            <h2>Avisos Publicados</h2>
+
+            <div th:if="${#lists.isEmpty(avisos)}" class="empty">
+                Nenhum aviso publicado.
+            </div>
+
+            <div th:unless="${#lists.isEmpty(avisos)}" class="notice-list">
+                <article class="notice" th:each="item : ${avisos}">
+                    <div class="notice-header">
+                        <h3 th:text="${item.titulo}">Título do aviso</h3>
+                        <time class="notice-date"
+                              th:if="${item.dataPublicacao != null}"
+                              th:text="${#dates.format(item.dataPublicacao, 'dd/MM/yyyy HH:mm')}">
+                            08/05/2026 10:00
+                        </time>
+                    </div>
+                    <p th:text="${item.mensagem}">Mensagem do aviso</p>
+                    <span class="status" th:text="${item.ativo == false ? 'Inativo' : 'Ativo'}">Ativo</span>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -4,14 +4,11 @@ import com.gaspo.api.dto.request.AgendamentoPorNomeDTO;
 import com.gaspo.api.dto.request.ConsultaRequestDTO;
 import com.gaspo.api.dto.response.ConsultaResponseDTO;
 import com.gaspo.api.dto.response.LotacaoResumoDTO;
-import com.gaspo.api.dto.response.ProntuarioResumoDTO;
+import com.gaspo.api.mapper.ConsultaMapper;
 import com.gaspo.api.model.esus.ConsultaModel;
 import com.gaspo.api.model.esus.LotacaoModel;
-import com.gaspo.api.model.esus.ProntuarioModel;
-import com.gaspo.api.model.enums.StatusConsulta;
 import com.gaspo.api.repository.esus.ConsultaRepository;
 import com.gaspo.api.repository.esus.LotacaoRepository;
-import com.gaspo.api.repository.esus.ProfissionalRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,17 +19,19 @@ import java.util.stream.Collectors;
 @Service
 public class ConsultaService {
 
-    @Autowired
-    private ConsultaRepository consultaRepository;
+    private static final Long STATUS_AGENDADO = 0L;
 
     @Autowired
-    private ProfissionalRepository profissionalRepository;
+    private ConsultaRepository consultaRepository;
 
     @Autowired
     private LotacaoRepository lotacaoRepository;
 
     @Autowired
     private AgendaService agendaService;
+
+    @Autowired
+    private ConsultaMapper consultaMapper;
 
     public ConsultaResponseDTO prepararAgendamento(AgendamentoPorNomeDTO dto) {
         List<LotacaoModel> lotacoes = lotacaoRepository.findByProfissionalNomeAndUnidadeSaudeNome(dto.nomeProfissional(), dto.nomeUnidade());
@@ -49,41 +48,22 @@ public class ConsultaService {
 
     public ConsultaResponseDTO realizarAgendamento(ConsultaRequestDTO dto) {
 
-        ConsultaModel consulta = new ConsultaModel();
-        consulta.setData(dto.data());
-
-        if (dto.lotacaoId() != null) {
-            LotacaoModel lotacao = new LotacaoModel();
-            lotacao.setId(dto.lotacaoId());
-            consulta.setLotacao(lotacao);
-        }
-
-        if (dto.prontuarioId() != null) {
-            ProntuarioModel prontuario = new ProntuarioModel();
-            prontuario.setId(dto.prontuarioId());
-            consulta.setProntuario(prontuario);
-        }
-
-        consulta.setStatus(0L); // 0 = AGENDADO no e-SUS
+        ConsultaModel consulta = consultaMapper.toModel(dto);
+        consulta.setStatus(STATUS_AGENDADO); // 0 = AGENDADO no e-SUS
 
         ConsultaModel saved = consultaRepository.save(consulta);
-        return toResponseDTO(saved);
+        return consultaMapper.toResponseDTO(saved);
     }
 
     public List<ConsultaResponseDTO> listarTodas() {
-        return consultaRepository.findAll().stream()
-                .map(this::toResponseDTO)
+        return consultaRepository.findByStatus(STATUS_AGENDADO).stream()
+                .map(consultaMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public List<LotacaoResumoDTO> listarLotacoesResumo() {
         return lotacaoRepository.findAll().stream()
-                .map(model -> {
-                    String nomeProf = model.getProfissional() != null ? model.getProfissional().getNome() : "";
-                    String espProf = model.getProfissional() != null ? model.getProfissional().getEspecialidade() : "";
-                    String nomeUni = model.getUnidadeSaude() != null ? model.getUnidadeSaude().getNome() : "";
-                    return new LotacaoResumoDTO(model.getId(), nomeProf, espProf, nomeUni);
-                })
+                .map(consultaMapper::toLotacaoResumoDTO)
                 .collect(Collectors.toList());
     }
 
@@ -95,43 +75,5 @@ public class ConsultaService {
         consulta.setStatus(4L);
 
         consultaRepository.save(consulta);
-    }
-
-    private ConsultaResponseDTO toResponseDTO(ConsultaModel model) {
-        LotacaoResumoDTO lotacaoDTO = null;
-        if (model.getLotacao() != null) {
-            String nomeProf = null;
-            String espProf = null;
-            if (model.getLotacao().getProfissional() != null) {
-                nomeProf = model.getLotacao().getProfissional().getNome();
-                espProf = model.getLotacao().getProfissional().getEspecialidade();
-            }
-            String nomeUni = null;
-            if (model.getLotacao().getUnidadeSaude() != null) {
-                nomeUni = model.getLotacao().getUnidadeSaude().getNome();
-            }
-            lotacaoDTO = new LotacaoResumoDTO(model.getLotacao().getId(), nomeProf, espProf, nomeUni);
-        }
-
-        ProntuarioResumoDTO prontuarioDTO = null;
-        if (model.getProntuario() != null) {
-            String nomePac = null;
-            String cpfPac = null;
-            if (model.getProntuario().getPaciente() != null) {
-                nomePac = model.getProntuario().getPaciente().getNome();
-                cpfPac = model.getProntuario().getPaciente().getCpf();
-            }
-            prontuarioDTO = new ProntuarioResumoDTO(model.getProntuario().getId(), nomePac, cpfPac);
-        }
-
-        return new ConsultaResponseDTO(
-                model.getId(),
-                model.getData(),
-                model.getStatus(),
-                model.getStatusSincronizacao(),
-                model.getForaUbs(),
-                lotacaoDTO,
-                prontuarioDTO
-        );
     }
 }
