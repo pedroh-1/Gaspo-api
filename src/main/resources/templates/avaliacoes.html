@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f4f6f8;
+            --surface: #ffffff;
+            --text: #1f2933;
+            --muted: #697386;
+            --border: #d8dee6;
+            --primary: #176448;
+            --primary-hover: #104c36;
+            --danger-bg: #fce8e6;
+            --danger-text: #9b1c1c;
+            --success-bg: #e7f5ec;
+            --success-text: #176448;
+            --star: #b7791f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: min(1120px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .panel h2 {
+            margin: 0 0 16px;
+            font-size: 18px;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text);
+            font: inherit;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        button,
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            border: 0;
+            border-radius: 6px;
+            padding: 0 14px;
+            background: var(--primary);
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button:hover,
+        .button:hover {
+            background: var(--primary-hover);
+        }
+
+        .button.secondary {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+        }
+
+        .button.secondary:hover {
+            background: #eef2f5;
+        }
+
+        .alert {
+            margin-bottom: 16px;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .alert.success {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .alert.error {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 680px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid var(--border);
+            padding: 12px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .nota {
+            color: var(--star);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .empty {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 820px) {
+            .header,
+            .layout {
+                display: block;
+            }
+
+            .panel {
+                margin-bottom: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="header">
+        <div>
+            <h1>Avaliações dos médicos</h1>
+            <p class="subtitle">Registre avaliações dos pacientes e consulte o histórico por profissional.</p>
+        </div>
+        <a class="button secondary" href="/web/avisos">Avisos</a>
+    </header>
+
+    <div class="alert success" th:if="${mensagem}" th:text="${mensagem}"></div>
+    <div class="alert error" th:if="${erro}" th:text="${erro}"></div>
+
+    <section class="layout">
+        <div class="panel">
+            <h2>Nova avaliação</h2>
+            <form th:action="@{/web/avaliacoes}" th:object="${novaAvaliacao}" method="post">
+                <label for="profissionalId">Médico</label>
+                <select id="profissionalId" th:field="*{profissionalId}" required>
+                    <option value="" disabled selected>Selecione um médico</option>
+                    <option th:each="profissional : ${profissionais}"
+                            th:value="${profissional.id}"
+                            th:text="${profissional.nome} + (${profissional.especialidade != null ? ' - ' + profissional.especialidade : ''})">
+                        Médico
+                    </option>
+                </select>
+
+                <label for="pacienteId">Paciente</label>
+                <select id="pacienteId" th:field="*{pacienteId}" required>
+                    <option value="" disabled selected>Selecione um paciente</option>
+                    <option th:each="paciente : ${pacientes}"
+                            th:value="${paciente.id}"
+                            th:text="${paciente.nome} + (${paciente.cpf != null ? ' - CPF ' + paciente.cpf : ''})">
+                        Paciente
+                    </option>
+                </select>
+
+                <label for="nota">Nota</label>
+                <input id="nota" th:field="*{nota}" type="number" min="1" max="5" required>
+
+                <label for="comentario">Comentário</label>
+                <textarea id="comentario" th:field="*{comentario}" maxlength="500"></textarea>
+
+                <div class="actions">
+                    <button type="submit">Publicar avaliação</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="panel">
+            <h2>Histórico de avaliações</h2>
+            <form th:action="@{/web/avaliacoes}" method="get">
+                <label for="filtroProfissionalId">Filtrar por médico</label>
+                <select id="filtroProfissionalId" name="profissionalId">
+                    <option value="">Todos os médicos</option>
+                    <option th:each="profissional : ${profissionais}"
+                            th:value="${profissional.id}"
+                            th:selected="${profissional.id == profissionalSelecionadoId}"
+                            th:text="${profissional.nome} + (${profissional.especialidade != null ? ' - ' + profissional.especialidade : ''})">
+                        Médico
+                    </option>
+                </select>
+                <div class="actions">
+                    <button type="submit">Filtrar</button>
+                    <a class="button secondary" href="/web/avaliacoes">Limpar</a>
+                </div>
+            </form>
+
+            <div class="table-wrap" th:if="${!#lists.isEmpty(avaliacoes)}">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nota</th>
+                        <th>Médico</th>
+                        <th>Paciente</th>
+                        <th>Comentário</th>
+                        <th>Data</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="avaliacao : ${avaliacoes}">
+                        <td class="nota" th:text="${avaliacao.nota} + '/5'">5/5</td>
+                        <td>
+                            <strong th:text="${avaliacao.nomeProfissional}">Médico</strong><br>
+                            <span th:text="${avaliacao.especialidadeProfissional ?: 'Especialidade não informada'}">Especialidade</span>
+                        </td>
+                        <td th:text="${avaliacao.nomePaciente}">Paciente</td>
+                        <td th:text="${avaliacao.comentario ?: 'Sem comentário'}">Comentário</td>
+                        <td th:text="${avaliacao.dataAvaliacao != null ? #dates.format(avaliacao.dataAvaliacao, 'dd/MM/yyyy HH:mm') : 'Não informado'}">Data</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="empty" th:if="${#lists.isEmpty(avaliacoes)}">Nenhuma avaliação encontrada.</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

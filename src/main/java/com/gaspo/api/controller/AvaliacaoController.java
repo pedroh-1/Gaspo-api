@@ -3,15 +3,16 @@ package com.gaspo.api.controller;
 import com.gaspo.api.dto.request.AvaliacaoRequestDTO;
 import com.gaspo.api.dto.response.AvaliacaoResponseDTO;
 import com.gaspo.api.model.gaspo.AvaliacaoModel;
-import com.gaspo.api.model.esus.PacienteModel;
 import com.gaspo.api.service.AvaliacaoService;
-import com.gaspo.api.service.PacienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/avaliacoes")
+@RequestMapping({"/api/avaliacoes"})
 public class AvaliacaoController {
 
     @Autowired
@@ -23,30 +24,18 @@ public class AvaliacaoController {
         return ResponseEntity.ok(salva);
     }
 
-    @Autowired
-    private AvaliacaoService avaliacaoService;
-
-    @Autowired
-    private PacienteService pacienteService;
+    @GetMapping
+    public ResponseEntity<List<AvaliacaoResponseDTO>> listarTodas() {
+        return ResponseEntity.ok(service.listarTodas());
+    }
 
     @PostMapping("/avaliar")
-    public ResponseEntity<AvaliacaoResponseDTO> avaliar(@RequestBody AvaliacaoRequestDTO request) {
-        // Busca o paciente
-        PacienteModel paciente = pacienteService.buscarPorId(request.pacienteId())
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+    public ResponseEntity<AvaliacaoResponseDTO> avaliar(@Valid @RequestBody AvaliacaoRequestDTO request) {
+        return ResponseEntity.ok(service.avaliar(request));
+    }
 
-        // Converte Request -> Model
-        AvaliacaoModel avaliacao = new AvaliacaoModel(request.nota(), request.comentario(), request.pacienteId());
-        AvaliacaoModel salva = avaliacaoService.salvar(avaliacao);
-
-        // Converte Model -> Response
-        AvaliacaoResponseDTO response = new AvaliacaoResponseDTO(
-                salva.getId(),
-                salva.getNota(),
-                salva.getComentario(),
-                paciente.getNome()
-        );
-
-        return ResponseEntity.ok(response);
+    @GetMapping("/profissional/{profissionalId}")
+    public ResponseEntity<List<AvaliacaoResponseDTO>> listarPorProfissional(@PathVariable Long profissionalId) {
+        return ResponseEntity.ok(service.listarPorProfissional(profissionalId));
     }
 }

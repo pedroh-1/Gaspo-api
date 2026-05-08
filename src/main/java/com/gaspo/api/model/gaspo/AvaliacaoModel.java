@@ -1,7 +1,7 @@
 package com.gaspo.api.model.gaspo;
 
-import com.gaspo.api.model.esus.PacienteModel;
 import jakarta.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "tb_avaliacao", schema = "public")
@@ -17,18 +17,26 @@ public class AvaliacaoModel {
     @Column(length = 500)
     private String comentario; //
 
-    @JoinColumn(name = "co_seq_cidadao")
+    @Column(name = "co_seq_cidadao")
     private Long pacienteId; // Relacionamento com Paciente
+
+    @Column(name = "co_seq_prof")
+    private Long profissionalId; // Relacionamento com Profissional
+
+    @Column(name = "dt_avaliacao")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAvaliacao;
 
     // Construtor vazio obrigatório para o JPA
     public AvaliacaoModel() {
     }
 
     // Construtor completo para facilitar o uso no Service/Controller
-    public AvaliacaoModel(int nota, String comentario, Long pacienteId) {
+    public AvaliacaoModel(int nota, String comentario, Long pacienteId, Long profissionalId) {
         this.nota = nota;
         this.comentario = comentario;
         this.pacienteId = pacienteId;
+        this.profissionalId = profissionalId;
     }
 
     // --- Getters e Setters ---
@@ -63,5 +71,21 @@ public class AvaliacaoModel {
 
     public void setPacienteId(Long pacienteId) {
         this.pacienteId = pacienteId;
+    }
+
+    public Long getProfissionalId() {
+        return profissionalId;
+    }
+
+    public void setProfissionalId(Long profissionalId) {
+        this.profissionalId = profissionalId;
+    }
+
+    public Date getDataAvaliacao() {
+        return dataAvaliacao;
+    }
+
+    public void setDataAvaliacao(Date dataAvaliacao) {
+        this.dataAvaliacao = dataAvaliacao;
     }
 }

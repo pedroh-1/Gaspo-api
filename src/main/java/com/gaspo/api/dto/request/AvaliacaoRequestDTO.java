@@ -11,5 +11,8 @@ public record AvaliacaoRequestDTO(
         String comentario,
 
         @NotNull
-        Long pacienteId
+        Long pacienteId,
+
+        @NotNull
+        Long profissionalId
 ) {}
