@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker local database dumps ###
+docker/esus/init/*.backup
+docker/esus/init/*.dump
+docker/esus/init/*.sql.gz

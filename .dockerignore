@@ -1,0 +1,12 @@
+target/
+.git/
+.idea/
+.codex/
+.agents/
+*.iml
+*.log
+README.md
+DOCKER.md
+docker/esus/init/*.sql
+docker/esus/init/*.dump
+docker/esus/init/*.backup
