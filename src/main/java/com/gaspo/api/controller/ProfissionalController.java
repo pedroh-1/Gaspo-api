@@ -39,9 +39,13 @@ public class ProfissionalController {
     }
 
     //Rota para atualizar o status de atendimento(funcionário)
-    //rota para criar novo profissional
+    @PutMapping("/status")
+    public ResponseEntity<StatusProfissionalResponseDTO> atualizarStatus(@Valid @RequestBody StatusProfissionalRequestDTO request) {
+        ProfissionalModel atualizado = service.atualizarStatus(request.profissionalId(), request.novoStatus());
+        return ResponseEntity.ok(new StatusProfissionalResponseDTO(atualizado.getId(), atualizado.getNome(), atualizado.getStatus()));
+    }
 
+    //rota para criar novo profissional (não aplicável, e-SUS read-only)
 
-    //rota para remover profissional
-
+    //rota para remover profissional (não aplicável, e-SUS read-only)
 }

@@ -64,8 +64,11 @@ public class PacienteService {
         usuario.setEmail(dto.email());
         usuario.setNome(pacienteEsus.getNome());
         usuario.setCpf(pacienteEsus.getCpf());
-        // TODO: Criptografar a senha (ex: passwordEncoder.encode(dto.senha()))
-        usuario.setSenha(dto.senha());
+        
+        // Criptografar a senha usando BCrypt
+        org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder passwordEncoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
+        
         usuario.setIdCidadaoEsus(pacienteEsus.getId());
 
         return usuarioRepository.save(usuario);

@@ -1,6 +1,6 @@
 package com.gaspo.api.controller;
 
-import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
+import com.gaspo.api.model.esus.UnidadeSaudeModel;
 import com.gaspo.api.service.UnidadeSaudeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

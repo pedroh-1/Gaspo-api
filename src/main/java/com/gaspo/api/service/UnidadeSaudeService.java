@@ -1,7 +1,7 @@
 package com.gaspo.api.service;
 
-import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
-import com.gaspo.api.repository.gaspo.UnidadeSaudeRepository;
+import com.gaspo.api.model.esus.UnidadeSaudeModel;
+import com.gaspo.api.repository.esus.UnidadeSaudeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
