@@ -24,6 +24,11 @@ public class AvisoController {
         return service.publicar(aviso);
     }
 
+    @PutMapping("/{id}")
+    public AvisoModel editarAviso(@PathVariable Long id, @RequestBody AvisoModel aviso) {
+        return service.editar(id, aviso);
+    }
+
     @DeleteMapping("/{id}")
     public void removerAviso(@PathVariable Long id) {
         service.remover(id);

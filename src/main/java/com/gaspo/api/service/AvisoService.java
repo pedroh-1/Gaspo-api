@@ -34,6 +34,26 @@ public class AvisoService {
         return repository.save(aviso);
     }
 
+    public AvisoModel editar(Long id, AvisoModel dados) {
+        AvisoModel aviso = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aviso não encontrado"));
+
+        if (dados.getTitulo() != null && !dados.getTitulo().isBlank()) {
+            aviso.setTitulo(dados.getTitulo());
+        }
+        if (dados.getMensagem() != null && !dados.getMensagem().isBlank()) {
+            aviso.setMensagem(dados.getMensagem());
+        }
+        if (dados.getDataExpiracao() != null) {
+            aviso.setDataExpiracao(dados.getDataExpiracao());
+        }
+        if (dados.getAtivo() != null) {
+            aviso.setAtivo(dados.getAtivo());
+        }
+
+        return repository.save(aviso);
+    }
+
     public void remover(Long id) {
         repository.deleteById(id);
     }
