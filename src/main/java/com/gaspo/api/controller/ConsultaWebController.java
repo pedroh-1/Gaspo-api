@@ -4,6 +4,7 @@ import com.gaspo.api.dto.request.ConsultaFormDTO;
 import com.gaspo.api.dto.request.ConsultaRequestDTO;
 import com.gaspo.api.service.ConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,7 +68,8 @@ public class ConsultaWebController {
     private void preencherModelo(Model model, ConsultaFormDTO form) {
         model.addAttribute("form", form);
         model.addAttribute("lotacoes", consultaService.listarLotacoesResumo());
-        model.addAttribute("agendamentosAtivos", consultaService.listarAgendamentosAtivos());
-        model.addAttribute("historico", consultaService.listarHistorico());
+        model.addAttribute("prontuarios", consultaService.listarProntuariosResumo());
+        model.addAttribute("agendamentosAtivos", consultaService.listarAgendamentosAtivos(PageRequest.of(0, 20)).content());
+        model.addAttribute("historico", consultaService.listarHistorico(PageRequest.of(0, 20)).content());
     }
 }

@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/avaliacoes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/pacientes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/consultas/meu-historico").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/consultas/ativos").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/consultas/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/web/**").permitAll() // Liberar rotas da pagina web/thymeleaf

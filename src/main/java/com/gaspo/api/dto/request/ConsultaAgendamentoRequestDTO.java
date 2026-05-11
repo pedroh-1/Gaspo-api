@@ -5,14 +5,12 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
-public record ConsultaRequestDTO(
-    @NotNull
-    @Future
-    Date data,
+public record ConsultaAgendamentoRequestDTO(
+        @NotNull
+        @Future
+        Date data,
 
-    @NotNull
-    Long lotacaoId,
-
-    @NotNull
-    Long prontuarioId
-) {}
+        @NotNull
+        Long lotacaoId
+) {
+}

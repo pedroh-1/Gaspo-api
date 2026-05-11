@@ -286,8 +286,14 @@
             </div>
 
             <div class="form-group">
-                <label for="prontuarioId">ID do prontuário</label>
-                <input type="number" id="prontuarioId" th:field="*{prontuarioId}" placeholder="Ex: 2629" required>
+                <label for="prontuarioId">Paciente / Prontuário</label>
+                <select id="prontuarioId" th:field="*{prontuarioId}" required>
+                    <option value="" disabled selected>Selecione um paciente</option>
+                    <option th:each="prontuario : ${prontuarios}"
+                            th:value="${prontuario.id}"
+                            th:text="${prontuario.nomePaciente} + ' - Prontuário ' + ${prontuario.id} + (${prontuario.cpfPaciente} != null ? ' - CPF ' + ${prontuario.cpfPaciente} : '')">
+                    </option>
+                </select>
             </div>
 
             <button class="button-primary" type="submit">Confirmar Agendamento</button>

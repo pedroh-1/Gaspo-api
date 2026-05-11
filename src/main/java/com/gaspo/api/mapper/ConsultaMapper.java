@@ -1,9 +1,12 @@
 package com.gaspo.api.mapper;
 
 import com.gaspo.api.dto.request.ConsultaRequestDTO;
+import com.gaspo.api.dto.response.AgendaDisponibilidadeResponseDTO;
 import com.gaspo.api.dto.response.ConsultaResponseDTO;
 import com.gaspo.api.dto.response.LotacaoResumoDTO;
+import com.gaspo.api.dto.response.ProntuarioOpcaoDTO;
 import com.gaspo.api.dto.response.ProntuarioResumoDTO;
+import com.gaspo.api.model.esus.AgendaModel;
 import com.gaspo.api.model.esus.ConsultaModel;
 import com.gaspo.api.model.esus.LotacaoModel;
 import com.gaspo.api.model.esus.ProntuarioModel;
@@ -81,5 +84,44 @@ public class ConsultaMapper {
         }
 
         return new ProntuarioResumoDTO(model.getId(), nomePaciente, cpfPaciente);
+    }
+
+    public ProntuarioOpcaoDTO toProntuarioOpcaoDTO(ProntuarioModel model) {
+        if (model == null) {
+            return null;
+        }
+
+        Long pacienteId = null;
+        String nomePaciente = null;
+        String cpfPaciente = null;
+        if (model.getPaciente() != null) {
+            pacienteId = model.getPaciente().getId();
+            nomePaciente = model.getPaciente().getNome();
+            cpfPaciente = model.getPaciente().getCpf();
+        }
+
+        return new ProntuarioOpcaoDTO(model.getId(), pacienteId, nomePaciente, cpfPaciente);
+    }
+
+    public AgendaDisponibilidadeResponseDTO toAgendaDisponibilidadeDTO(AgendaModel model) {
+        if (model == null) {
+            return null;
+        }
+
+        Long profissionalId = null;
+        String nomeProfissional = null;
+        if (model.getProfissional() != null) {
+            profissionalId = model.getProfissional().getId();
+            nomeProfissional = model.getProfissional().getNome();
+        }
+
+        return new AgendaDisponibilidadeResponseDTO(
+                model.getId(),
+                model.getData(),
+                model.getHorario(),
+                model.getDisponibilidade(),
+                profissionalId,
+                nomeProfissional
+        );
     }
 }
