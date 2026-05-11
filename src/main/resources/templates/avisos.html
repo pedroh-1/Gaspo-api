@@ -250,6 +250,7 @@
     </style>
 </head>
 <body>
+<div th:replace="~{fragments/menu :: menu}"></div>
 <main class="page">
     <header class="header">
         <div>
@@ -262,7 +263,7 @@
     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
     <section class="layout">
-        <form class="panel" th:action="@{/web/avisos}" th:object="${aviso}" method="post">
+        <form class="panel" th:if="${session.usuarioTipo == 'FUNCIONARIO'}" th:action="@{/web/avisos}" th:object="${aviso}" method="post">
             <h2>Novo Aviso</h2>
 
             <div class="form-group">
@@ -282,6 +283,11 @@
 
             <button type="submit">Publicar</button>
         </form>
+
+        <div class="panel" th:if="${session.usuarioTipo != 'FUNCIONARIO'}">
+            <h2>Novo Aviso</h2>
+            <p class="empty">Faça login como funcionário para publicar comunicados.</p>
+        </div>
 
         <div class="panel">
             <h2>Avisos Publicados</h2>

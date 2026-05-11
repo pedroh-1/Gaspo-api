@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda</title>
+    <style>
+        :root {
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --text: #1f2933;
+            --muted: #667085;
+            --border: #d6dbe1;
+            --primary: #1f7a5c;
+            --primary-hover: #176448;
+            --danger: #b42318;
+            --danger-bg: #fce8e6;
+            --danger-text: #9b1c1c;
+            --success-bg: #e7f5ec;
+            --success-text: #176448;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        .header { margin-bottom: 24px; }
+        h1 { margin: 0; font-size: 28px; }
+        h2 { margin: 0 0 16px; font-size: 18px; }
+        .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(300px, 380px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        select, input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font: inherit;
+            background: #fff;
+        }
+
+        button {
+            min-height: 38px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 800;
+            padding: 0 12px;
+        }
+
+        button:hover { background: var(--primary-hover); }
+        button.danger { background: var(--danger); }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--border);
+            padding: 12px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        .alert {
+            margin-bottom: 16px;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .alert-success { background: var(--success-bg); color: var(--success-text); }
+        .alert-danger { background: var(--danger-bg); color: var(--danger-text); }
+
+        @media (max-width: 860px) {
+            .layout { display: block; }
+            .panel { margin-bottom: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/menu :: menu}"></div>
+
+<main class="page">
+    <header class="header">
+        <h1>Agenda de atendimento</h1>
+        <p class="subtitle">Gere horários por profissional e controle a disponibilidade.</p>
+    </header>
+
+    <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <section class="layout">
+        <form class="panel" th:action="@{/web/agendas/gerar-grade}" method="post">
+            <h2>Gerar grade</h2>
+            <label for="profissionalId">Profissional</label>
+            <select id="profissionalId" name="profissionalId" required>
+                <option value="" disabled selected>Selecione</option>
+                <option th:each="profissional : ${profissionais}"
+                        th:value="${profissional.id}"
+                        th:text="${profissional.nome} + (${profissional.especialidade != null ? ' - ' + profissional.especialidade : ''})">
+                    Profissional
+                </option>
+            </select>
+
+            <label for="data">Data</label>
+            <input id="data" name="data" type="date" required>
+
+            <label for="horarios">Horários</label>
+            <input id="horarios" name="horarios" placeholder="08:00, 08:30, 09:00" required>
+
+            <button type="submit">Gerar horários</button>
+        </form>
+
+        <section class="panel">
+            <h2>Horários cadastrados</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Profissional</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="agenda : ${agendas}">
+                        <td th:text="${agenda.data}">2026-05-11</td>
+                        <td th:text="${agenda.horario}">08:00</td>
+                        <td th:text="${agenda.profissional != null ? agenda.profissional.nome : 'Profissional não informado'}">Profissional</td>
+                        <td th:text="${agenda.disponibilidade}">DISPONIVEL</td>
+                        <td>
+                            <div class="actions">
+                                <form th:action="@{/web/agendas/{id}/disponibilidade(id=${agenda.id})}" method="post">
+                                    <select name="disponibilidade">
+                                        <option th:each="status : ${disponibilidades}"
+                                                th:value="${status}"
+                                                th:selected="${status == agenda.disponibilidade}"
+                                                th:text="${status}">
+                                        </option>
+                                    </select>
+                                    <button type="submit">Salvar</button>
+                                </form>
+                                <form th:action="@{/web/agendas/{id}/remover(id=${agenda.id})}" method="post">
+                                    <button class="danger" type="submit">Remover</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </section>
+</main>
+</body>
+</html>

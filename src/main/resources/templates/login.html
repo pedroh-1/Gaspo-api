@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        :root {
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --text: #1f2933;
+            --muted: #667085;
+            --border: #d6dbe1;
+            --primary: #1f7a5c;
+            --primary-hover: #176448;
+            --danger-bg: #fce8e6;
+            --danger-text: #9b1c1c;
+            --success-bg: #e7f5ec;
+            --success-text: #176448;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: min(520px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 22px;
+        }
+
+        h1 { margin: 0; font-size: 28px; }
+
+        .subtitle {
+            margin: 8px 0 22px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font: inherit;
+        }
+
+        button {
+            width: 100%;
+            min-height: 42px;
+            margin-top: 18px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 800;
+        }
+
+        button:hover { background: var(--primary-hover); }
+
+        .alert {
+            margin-bottom: 16px;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .alert-success { background: var(--success-bg); color: var(--success-text); }
+        .alert-danger { background: var(--danger-bg); color: var(--danger-text); }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/menu :: menu}"></div>
+
+<main class="page">
+    <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <form class="panel" th:action="@{/web/login}" method="post">
+        <h1>Acesso ao GASPO</h1>
+        <p class="subtitle">Use o e-mail e senha de paciente ou funcionário.</p>
+
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email" required>
+
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" required>
+
+        <button type="submit">Entrar</button>
+    </form>
+</main>
+</body>
+</html>

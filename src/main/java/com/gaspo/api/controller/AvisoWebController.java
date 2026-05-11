@@ -2,6 +2,7 @@ package com.gaspo.api.controller;
 
 import com.gaspo.api.model.gaspo.AvisoModel;
 import com.gaspo.api.service.AvisoService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +27,14 @@ public class AvisoWebController {
     }
 
     @PostMapping
-    public String publicarAviso(@ModelAttribute("aviso") AvisoModel aviso, RedirectAttributes redirectAttributes) {
+    public String publicarAviso(@ModelAttribute("aviso") AvisoModel aviso,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
         try {
+            if (!"FUNCIONARIO".equals(session.getAttribute("usuarioTipo"))) {
+                redirectAttributes.addFlashAttribute("erro", "Faça login como funcionário para publicar avisos.");
+                return "redirect:/web/login";
+            }
             avisoService.publicar(aviso);
             redirectAttributes.addFlashAttribute("mensagem", "Aviso publicado com sucesso!");
         } catch (Exception e) {
