@@ -3,10 +3,11 @@ package com.gaspo.api.service;
 
 
 import com.gaspo.api.model.enums.Disponibilidade;
-import com.gaspo.api.model.esus.AgendaModel;
 import com.gaspo.api.model.esus.ProfissionalModel;
-import com.gaspo.api.repository.esus.AgendaRepository;
+import com.gaspo.api.model.gaspo.AgendaModel;
+import com.gaspo.api.repository.gaspo.AgendaRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,10 +32,18 @@ public class AgendaService {
      */
     @Transactional
     public void gerarGradeHoraria(ProfissionalModel profissional, LocalDate data, List<LocalTime> horarios) {
+        if (profissional == null || profissional.getId() == null) {
+            throw new IllegalArgumentException("Profissional é obrigatório");
+        }
+        if (data == null) {
+            throw new IllegalArgumentException("Data é obrigatória");
+        }
+
         // Implementação do 'loop [para cada horário]' do diagrama de sequência [cite: 342]
         for (LocalTime hora : horarios) {
             AgendaModel slot = new AgendaModel();
-            slot.setProfissional(profissional);
+            slot.setProfissionalId(profissional.getId());
+            slot.setProfissionalNome(profissional.getNome() != null ? profissional.getNome() : "Profissional " + profissional.getId());
             slot.setData(data);
             slot.setHorario(hora);
             slot.setDisponibilidade(Disponibilidade.DISPONIVEL);
@@ -53,7 +62,7 @@ public class AgendaService {
     }
 
     public List<AgendaModel> listarTodos() {
-        return agendaRepository.findAll();
+        return agendaRepository.findAll(Sort.by(Sort.Direction.ASC, "data", "horario"));
     }
 
     public Optional<AgendaModel> buscarPorId(Long id) {

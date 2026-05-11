@@ -152,10 +152,13 @@
                 <option value="" disabled selected>Selecione</option>
                 <option th:each="profissional : ${profissionais}"
                         th:value="${profissional.id}"
-                        th:text="${profissional.nome} + (${profissional.especialidade != null ? ' - ' + profissional.especialidade : ''})">
+                            th:text="${profissional.nome} + (${profissional.especialidade != null ? ' - ' + profissional.especialidade : ''})">
                     Profissional
                 </option>
             </select>
+            <p class="subtitle" th:if="${#lists.isEmpty(profissionais)}">
+                Nenhum profissional disponível para montar agenda.
+            </p>
 
             <label for="data">Data</label>
             <input id="data" name="data" type="date" required>
@@ -168,8 +171,11 @@
 
         <section class="panel">
             <h2>Horários cadastrados</h2>
+            <div th:if="${#lists.isEmpty(agendas)}" class="alert alert-success">
+                Nenhum horário cadastrado.
+            </div>
             <div class="table-wrap">
-                <table>
+                <table th:unless="${#lists.isEmpty(agendas)}">
                     <thead>
                     <tr>
                         <th>Data</th>
@@ -183,7 +189,7 @@
                     <tr th:each="agenda : ${agendas}">
                         <td th:text="${agenda.data}">2026-05-11</td>
                         <td th:text="${agenda.horario}">08:00</td>
-                        <td th:text="${agenda.profissional != null ? agenda.profissional.nome : 'Profissional não informado'}">Profissional</td>
+                        <td th:text="${agenda.profissionalNome}">Profissional</td>
                         <td th:text="${agenda.disponibilidade}">DISPONIVEL</td>
                         <td>
                             <div class="actions">

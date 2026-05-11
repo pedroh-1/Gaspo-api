@@ -6,7 +6,7 @@ import com.gaspo.api.dto.response.ConsultaResponseDTO;
 import com.gaspo.api.dto.response.LotacaoResumoDTO;
 import com.gaspo.api.dto.response.ProntuarioOpcaoDTO;
 import com.gaspo.api.dto.response.ProntuarioResumoDTO;
-import com.gaspo.api.model.esus.AgendaModel;
+import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.model.esus.ConsultaModel;
 import com.gaspo.api.model.esus.LotacaoModel;
 import com.gaspo.api.model.esus.ProntuarioModel;
@@ -108,20 +108,13 @@ public class ConsultaMapper {
             return null;
         }
 
-        Long profissionalId = null;
-        String nomeProfissional = null;
-        if (model.getProfissional() != null) {
-            profissionalId = model.getProfissional().getId();
-            nomeProfissional = model.getProfissional().getNome();
-        }
-
         return new AgendaDisponibilidadeResponseDTO(
                 model.getId(),
                 model.getData(),
                 model.getHorario(),
                 model.getDisponibilidade(),
-                profissionalId,
-                nomeProfissional
+                model.getProfissionalId(),
+                model.getProfissionalNome()
         );
     }
 }

@@ -1,6 +1,6 @@
 package com.gaspo.api.aggregate;
 
-import com.gaspo.api.model.esus.AgendaModel;
+import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.model.esus.ConsultaModel;
 import com.gaspo.api.model.esus.LotacaoModel;
 import com.gaspo.api.model.esus.ProntuarioModel;

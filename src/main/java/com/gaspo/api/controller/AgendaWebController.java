@@ -1,8 +1,8 @@
 package com.gaspo.api.controller;
 
 import com.gaspo.api.model.enums.Disponibilidade;
-import com.gaspo.api.model.esus.AgendaModel;
 import com.gaspo.api.model.esus.ProfissionalModel;
+import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.service.AgendaService;
 import com.gaspo.api.service.ProfissionalService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,8 +35,22 @@ public class AgendaWebController {
 
     @GetMapping
     public String exibirAgenda(Model model) {
-        model.addAttribute("agendas", agendaService.listarTodos());
-        model.addAttribute("profissionais", profissionalService.listarTodos());
+        try {
+            model.addAttribute("agendas", agendaService.listarTodos());
+        } catch (Exception e) {
+            model.addAttribute("agendas", new ArrayList<>());
+            model.addAttribute("erro", "Erro ao carregar agenda: " + e.getMessage());
+        }
+
+        try {
+            model.addAttribute("profissionais", profissionalService.listarTodos());
+        } catch (Exception e) {
+            model.addAttribute("profissionais", new ArrayList<>());
+            if (!model.containsAttribute("erro")) {
+                model.addAttribute("erro", "Erro ao carregar profissionais: " + e.getMessage());
+            }
+        }
+
         model.addAttribute("disponibilidades", Disponibilidade.values());
         return "agendas";
     }
@@ -46,13 +61,17 @@ public class AgendaWebController {
                              @RequestParam String horarios,
                              RedirectAttributes redirectAttributes) {
         try {
-            ProfissionalModel profissional = new ProfissionalModel();
-            profissional.setId(profissionalId);
+            ProfissionalModel profissional = profissionalService.buscarPorId(profissionalId)
+                    .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
             List<LocalTime> horariosConvertidos = Arrays.stream(horarios.split(","))
                     .map(String::trim)
                     .filter(valor -> !valor.isBlank())
                     .map(LocalTime::parse)
                     .toList();
+
+            if (horariosConvertidos.isEmpty()) {
+                throw new IllegalArgumentException("Informe pelo menos um horário válido.");
+            }
 
             agendaService.gerarGradeHoraria(profissional, data, horariosConvertidos);
             redirectAttributes.addFlashAttribute("mensagem", "Grade gerada com sucesso!");

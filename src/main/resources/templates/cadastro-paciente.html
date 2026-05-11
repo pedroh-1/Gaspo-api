@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Cadastro de Paciente</title>
     <style>
         :root {
             --bg: #f5f7f9;
@@ -30,7 +30,7 @@
         }
 
         .page {
-            width: min(520px, calc(100% - 32px));
+            width: min(560px, calc(100% - 32px));
             margin: 0 auto;
             padding: 32px 0;
         }
@@ -48,6 +48,7 @@
             margin: 8px 0 22px;
             color: var(--muted);
             font-size: 14px;
+            line-height: 1.45;
         }
 
         label {
@@ -113,21 +114,26 @@
     <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
-    <form class="panel" th:action="@{/web/login}" method="post">
-        <h1>Acesso ao GASPO</h1>
-        <p class="subtitle">Use o e-mail e senha de paciente ou funcionário.</p>
+    <form class="panel" th:action="@{/web/cadastro}" th:object="${cadastro}" method="post">
+        <h1>Cadastro de paciente</h1>
+        <p class="subtitle">
+            O cadastro só é liberado quando o CPF já existe na base do e-SUS.
+        </p>
+
+        <label for="cpf">CPF</label>
+        <input id="cpf" th:field="*{cpf}" inputmode="numeric" placeholder="Somente números" required>
 
         <label for="email">E-mail</label>
-        <input id="email" name="email" type="email" required>
+        <input id="email" th:field="*{email}" type="email" required>
 
         <label for="senha">Senha</label>
-        <input id="senha" name="senha" type="password" required>
+        <input id="senha" th:field="*{senha}" type="password" minlength="6" required>
 
-        <button type="submit">Entrar</button>
+        <button type="submit">Criar conta</button>
     </form>
 
     <p class="footer-link">
-        Paciente sem conta? <a th:href="@{/web/cadastro}">Criar cadastro</a>
+        Já possui conta? <a th:href="@{/web/login}">Entrar</a>
     </p>
 </main>
 </body>
