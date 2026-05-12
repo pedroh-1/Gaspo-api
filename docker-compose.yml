@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345678
     ports:
-      - "15433:5432"
+      - "15443:5432"
     volumes:
       - postgres_esus_data:/var/lib/postgresql/data
       - ./docker/esus/init:/docker-entrypoint-initdb.d:ro
@@ -25,7 +25,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: gaspo123
     ports:
-      - "15434:5432"
+      - "15444:5432"
     volumes:
       - postgres_gaspo_data:/var/lib/postgresql/data
     healthcheck:
@@ -57,7 +57,7 @@ services:
       APP_JPA_GASPO_HIBERNATE_DDL_AUTO: update
       WAIT_FOR_DB_HOSTS: postgres_esus:5432,postgres_gaspo:5432
     ports:
-      - "18081:8081"
+      - "18082:8081"
     restart: unless-stopped
 
 volumes:

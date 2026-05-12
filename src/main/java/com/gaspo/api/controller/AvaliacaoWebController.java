@@ -1,9 +1,11 @@
 package com.gaspo.api.controller;
 
 import com.gaspo.api.dto.request.AvaliacaoRequestDTO;
+import com.gaspo.api.model.gaspo.UsuarioModel;
+import com.gaspo.api.repository.gaspo.UsuarioRepository;
 import com.gaspo.api.service.AvaliacaoService;
-import com.gaspo.api.service.PacienteService;
 import com.gaspo.api.service.ProfissionalService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,12 +27,16 @@ public class AvaliacaoWebController {
     private ProfissionalService profissionalService;
 
     @Autowired
-    private PacienteService pacienteService;
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping
-    public String exibirAvaliacoes(@RequestParam(required = false) Long profissionalId, Model model) {
+    public String exibirAvaliacoes(@RequestParam(required = false) Long profissionalId,
+                                   Model model,
+                                   HttpSession session) {
+        UsuarioModel pacienteLogado = usuarioDaSessao(session);
+
         model.addAttribute("profissionais", profissionalService.listarTodos());
-        model.addAttribute("pacientes", pacienteService.listarTodos());
+        model.addAttribute("pacienteLogado", pacienteLogado);
         model.addAttribute("novaAvaliacao", new AvaliacaoFormDTO());
         model.addAttribute("profissionalSelecionadoId", profissionalId);
         model.addAttribute("avaliacoes", profissionalId != null
@@ -41,12 +47,19 @@ public class AvaliacaoWebController {
 
     @PostMapping
     public String avaliar(@ModelAttribute("novaAvaliacao") AvaliacaoFormDTO form,
+                          HttpSession session,
                           RedirectAttributes redirectAttributes) {
         try {
+            UsuarioModel pacienteLogado = usuarioDaSessao(session);
+            if (pacienteLogado == null) {
+                redirectAttributes.addFlashAttribute("erro", "Faça login como paciente para publicar uma avaliação.");
+                return "redirect:/web/login";
+            }
+
             avaliacaoService.avaliar(new AvaliacaoRequestDTO(
                     form.getNota(),
                     form.getComentario(),
-                    form.getPacienteId(),
+                    pacienteLogado.getIdCidadaoEsus(),
                     form.getProfissionalId()
             ));
             redirectAttributes.addFlashAttribute("mensagem", "Avaliação registrada com sucesso!");
@@ -60,7 +73,6 @@ public class AvaliacaoWebController {
     public static class AvaliacaoFormDTO {
         private Integer nota = 5;
         private String comentario;
-        private Long pacienteId;
         private Long profissionalId;
 
         public Integer getNota() {
@@ -79,14 +91,6 @@ public class AvaliacaoWebController {
             this.comentario = comentario;
         }
 
-        public Long getPacienteId() {
-            return pacienteId;
-        }
-
-        public void setPacienteId(Long pacienteId) {
-            this.pacienteId = pacienteId;
-        }
-
         public Long getProfissionalId() {
             return profissionalId;
         }
@@ -94,5 +98,15 @@ public class AvaliacaoWebController {
         public void setProfissionalId(Long profissionalId) {
             this.profissionalId = profissionalId;
         }
+    }
+
+    private UsuarioModel usuarioDaSessao(HttpSession session) {
+        Object tipo = session.getAttribute("usuarioTipo");
+        Object email = session.getAttribute("usuarioEmail");
+        if (!"USUARIO".equals(tipo) || email == null) {
+            return null;
+        }
+
+        return usuarioRepository.findByEmail(email.toString()).orElse(null);
     }
 }

@@ -196,6 +196,25 @@
             font-size: 14px;
         }
 
+        .patient-box {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #f8fafb;
+            color: #344054;
+            font-size: 14px;
+            line-height: 1.45;
+            margin-bottom: 14px;
+            padding: 12px;
+        }
+
+        .patient-box strong {
+            display: block;
+            color: var(--text);
+            font-size: 15px;
+            margin-bottom: 2px;
+            overflow-wrap: anywhere;
+        }
+
         @media (max-width: 820px) {
             .header,
             .layout {
@@ -225,7 +244,20 @@
     <section class="layout">
         <div class="panel">
             <h2>Nova avaliação</h2>
-            <form th:action="@{/web/avaliacoes}" th:object="${novaAvaliacao}" method="post">
+
+            <div class="alert error" th:if="${pacienteLogado == null}">
+                Faça login como paciente para publicar uma avaliação.
+            </div>
+
+            <form th:if="${pacienteLogado != null}"
+                  th:action="@{/web/avaliacoes}"
+                  th:object="${novaAvaliacao}"
+                  method="post">
+                <div class="patient-box">
+                    <strong th:text="${pacienteLogado.nome}">Paciente</strong>
+                    <span th:text="'CPF: ' + (${pacienteLogado.cpf} ?: 'não informado')">CPF</span>
+                </div>
+
                 <label for="profissionalId">Médico</label>
                 <select id="profissionalId" th:field="*{profissionalId}" required>
                     <option value="" disabled selected>Selecione um médico</option>
@@ -233,16 +265,6 @@
                             th:value="${profissional.id}"
                             th:text="${profissional.nome} + (${profissional.especialidade != null ? ' - ' + profissional.especialidade : ''})">
                         Médico
-                    </option>
-                </select>
-
-                <label for="pacienteId">Paciente</label>
-                <select id="pacienteId" th:field="*{pacienteId}" required>
-                    <option value="" disabled selected>Selecione um paciente</option>
-                    <option th:each="paciente : ${pacientes}"
-                            th:value="${paciente.id}"
-                            th:text="${paciente.nome} + (${paciente.cpf != null ? ' - CPF ' + paciente.cpf : ''})">
-                        Paciente
                     </option>
                 </select>
 
