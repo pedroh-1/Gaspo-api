@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postos de Saúde</title>
+    <style>
+        :root {
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --text: #1f2933;
+            --muted: #667085;
+            --border: #d6dbe1;
+            --primary: #1f7a5c;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: min(1120px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        h1 { margin: 0; font-size: 28px; }
+        h2 { margin: 0 0 8px; font-size: 18px; overflow-wrap: anywhere; }
+
+        .subtitle {
+            margin: 6px 0 24px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .unit {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .details {
+            display: grid;
+            gap: 7px;
+            margin-top: 12px;
+            color: #344054;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .label {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .empty {
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--muted);
+            padding: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/menu :: menu}"></div>
+
+<main class="page">
+    <h1>Postos de saúde</h1>
+    <p class="subtitle">Consulte localização e contatos das unidades disponíveis.</p>
+
+    <div th:if="${#lists.isEmpty(unidades)}" class="empty">
+        Nenhum posto de saúde encontrado.
+    </div>
+
+    <section th:unless="${#lists.isEmpty(unidades)}" class="grid">
+        <article class="unit" th:each="unidade : ${unidades}">
+            <h2 th:text="${unidade.nome}">Posto de saúde</h2>
+            <div class="details">
+                <span th:if="${unidade.endereco != null}">
+                    <span class="label">Localização:</span>
+                    <span th:text="${unidade.endereco}">Endereço</span>
+                </span>
+                <span th:if="${unidade.complemento != null}">
+                    <span class="label">Complemento:</span>
+                    <span th:text="${unidade.complemento}">Complemento</span>
+                </span>
+                <span th:if="${unidade.pontoReferencia != null}">
+                    <span class="label">Referência:</span>
+                    <span th:text="${unidade.pontoReferencia}">Referência</span>
+                </span>
+                <span th:if="${unidade.telefone != null}">
+                    <span class="label">Telefone:</span>
+                    <span th:text="${unidade.telefone}">Telefone</span>
+                </span>
+                <span th:if="${unidade.email != null}">
+                    <span class="label">E-mail:</span>
+                    <span th:text="${unidade.email}">E-mail</span>
+                </span>
+                <span th:if="${unidade.cnes != null}">
+                    <span class="label">CNES:</span>
+                    <span th:text="${unidade.cnes}">CNES</span>
+                </span>
+            </div>
+        </article>
+    </section>
+</main>
+</body>
+</html>

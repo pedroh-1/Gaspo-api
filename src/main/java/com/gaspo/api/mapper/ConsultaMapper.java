@@ -58,16 +58,22 @@ public class ConsultaMapper {
             especialidadeProfissional = model.getProfissional().getEspecialidade();
         }
 
+        Long unidadeId = null;
         String nomeUnidade = null;
+        String enderecoUnidade = null;
         if (model.getUnidadeSaude() != null) {
+            unidadeId = model.getUnidadeSaude().getId();
             nomeUnidade = model.getUnidadeSaude().getNome();
+            enderecoUnidade = model.getUnidadeSaude().getEnderecoFormatado();
         }
 
         return new LotacaoResumoDTO(
                 model.getId(),
                 nomeProfissional,
                 especialidadeProfissional,
-                nomeUnidade
+                unidadeId,
+                nomeUnidade,
+                enderecoUnidade
         );
     }
 

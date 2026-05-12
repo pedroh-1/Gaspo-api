@@ -143,6 +143,44 @@
             background: var(--primary-hover);
         }
 
+        button.danger {
+            background: #b42318;
+        }
+
+        button.danger:hover {
+            background: #8f1d14;
+        }
+
+        .inline-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .inline-actions button {
+            width: auto;
+            min-height: 36px;
+            padding: 0 12px;
+            font-size: 13px;
+        }
+
+        .edit-form {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .edit-form input[type="text"],
+        .edit-form textarea {
+            font-size: 14px;
+        }
+
+        .edit-form textarea {
+            min-height: 90px;
+        }
+
         .alert {
             border-radius: 6px;
             margin-bottom: 16px;
@@ -308,6 +346,29 @@
                     </div>
                     <p th:text="${item.mensagem}">Mensagem do aviso</p>
                     <span class="status" th:text="${item.ativo == false ? 'Inativo' : 'Ativo'}">Ativo</span>
+
+                    <form class="edit-form"
+                          th:if="${session.usuarioTipo == 'FUNCIONARIO'}"
+                          th:action="@{/web/avisos/{id}/editar(id=${item.id})}"
+                          method="post">
+                        <input type="text" name="titulo" th:value="${item.titulo}" maxlength="255" required>
+                        <textarea name="mensagem" maxlength="1000" required th:text="${item.mensagem}"></textarea>
+                        <label class="checkbox">
+                            <input type="checkbox" name="ativo" value="true" th:checked="${item.ativo != false}">
+                            Ativo
+                        </label>
+                        <input type="hidden" name="_ativo" value="on">
+                        <div class="inline-actions">
+                            <button type="submit">Atualizar</button>
+                        </div>
+                    </form>
+
+                    <form class="inline-actions"
+                          th:if="${session.usuarioTipo == 'FUNCIONARIO'}"
+                          th:action="@{/web/avisos/{id}/remover(id=${item.id})}"
+                          method="post">
+                        <button class="danger" type="submit">Remover</button>
+                    </form>
                 </article>
             </div>
         </div>

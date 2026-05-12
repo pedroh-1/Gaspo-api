@@ -18,6 +18,11 @@ public class AvisoService {
         return repository.findAll();
     }
 
+    public AvisoModel buscarPorId(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aviso não encontrado"));
+    }
+
     public AvisoModel publicar(AvisoModel aviso) {
         if (aviso.getTitulo() == null || aviso.getTitulo().isBlank()) {
             aviso.setTitulo("Aviso");
@@ -55,6 +60,9 @@ public class AvisoService {
     }
 
     public void remover(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Aviso não encontrado");
+        }
         repository.deleteById(id);
     }
 }

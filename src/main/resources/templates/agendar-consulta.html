@@ -250,6 +250,13 @@
             overflow-wrap: anywhere;
         }
 
+        .location-hint {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
         @media (max-width: 860px) {
             .page {
                 width: min(100% - 24px, 1180px);
@@ -305,9 +312,12 @@
                     <option value="" disabled selected>Selecione um profissional</option>
                     <option th:each="lotacao : ${lotacoes}"
                             th:value="${lotacao.id}"
-                            th:text="${lotacao.nomeProfissional} + ' - ' + (${lotacao.especialidadeProfissional} ?: 'Geral') + ' - ' + ${lotacao.nomeUnidade}">
+                            th:text="${lotacao.nomeProfissional + ' - ' + (lotacao.especialidadeProfissional ?: 'Geral') + ' - ' + lotacao.nomeUnidade + (lotacao.enderecoUnidade != null ? ' - ' + lotacao.enderecoUnidade : '')}">
                     </option>
                 </select>
+                <p class="location-hint">
+                    A localização do posto aparece junto ao profissional selecionado quando estiver cadastrada no e-SUS.
+                </p>
             </div>
 
             <button class="button-primary" type="submit">Confirmar Agendamento</button>
@@ -336,6 +346,8 @@
 
                         <div class="details">
                             <span th:text="'Unidade: ' + (${consulta.lotacao != null ? consulta.lotacao.nomeUnidade : 'Não informada'})">Unidade</span>
+                            <span th:if="${consulta.lotacao != null && consulta.lotacao.enderecoUnidade != null}"
+                                  th:text="'Localização: ' + ${consulta.lotacao.enderecoUnidade}">Localização</span>
                             <span th:text="'Paciente: ' + (${consulta.prontuario != null ? consulta.prontuario.nomePaciente : 'Não informado'})">Paciente</span>
                             <span th:text="'Prontuário: ' + (${consulta.prontuario != null ? consulta.prontuario.id : 'Não informado'})">Prontuário</span>
                         </div>
@@ -374,6 +386,8 @@
 
                         <div class="details">
                             <span th:text="'Unidade: ' + (${consulta.lotacao != null ? consulta.lotacao.nomeUnidade : 'Não informada'})">Unidade</span>
+                            <span th:if="${consulta.lotacao != null && consulta.lotacao.enderecoUnidade != null}"
+                                  th:text="'Localização: ' + ${consulta.lotacao.enderecoUnidade}">Localização</span>
                             <span th:text="'Paciente: ' + (${consulta.prontuario != null ? consulta.prontuario.nomePaciente : 'Não informado'})">Paciente</span>
                             <span th:text="'Prontuário: ' + (${consulta.prontuario != null ? consulta.prontuario.id : 'Não informado'})">Prontuário</span>
                         </div>

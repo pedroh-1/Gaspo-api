@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -39,6 +40,43 @@ public class AvisoWebController {
             redirectAttributes.addFlashAttribute("mensagem", "Aviso publicado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao publicar aviso: " + e.getMessage());
+        }
+
+        return "redirect:/web/avisos";
+    }
+
+    @PostMapping("/{id}/editar")
+    public String editarAviso(@PathVariable Long id,
+                              @ModelAttribute("aviso") AvisoModel aviso,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            if (!"FUNCIONARIO".equals(session.getAttribute("usuarioTipo"))) {
+                redirectAttributes.addFlashAttribute("erro", "Faça login como funcionário para atualizar avisos.");
+                return "redirect:/web/login";
+            }
+            avisoService.editar(id, aviso);
+            redirectAttributes.addFlashAttribute("mensagem", "Aviso atualizado com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao atualizar aviso: " + e.getMessage());
+        }
+
+        return "redirect:/web/avisos";
+    }
+
+    @PostMapping("/{id}/remover")
+    public String removerAviso(@PathVariable Long id,
+                               HttpSession session,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            if (!"FUNCIONARIO".equals(session.getAttribute("usuarioTipo"))) {
+                redirectAttributes.addFlashAttribute("erro", "Faça login como funcionário para remover avisos.");
+                return "redirect:/web/login";
+            }
+            avisoService.remover(id);
+            redirectAttributes.addFlashAttribute("mensagem", "Aviso removido com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao remover aviso: " + e.getMessage());
         }
 
         return "redirect:/web/avisos";

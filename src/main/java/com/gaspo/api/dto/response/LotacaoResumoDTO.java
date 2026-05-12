@@ -4,5 +4,7 @@ public record LotacaoResumoDTO(
     Long id,
     String nomeProfissional,
     String especialidadeProfissional,
-    String nomeUnidade
+    Long unidadeId,
+    String nomeUnidade,
+    String enderecoUnidade
 ) {}

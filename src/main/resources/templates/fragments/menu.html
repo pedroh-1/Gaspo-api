@@ -83,11 +83,12 @@
             <div class="app-nav__links">
                 <a th:href="@{/web/avisos}">Avisos</a>
                 <a th:href="@{/web/consultas/agendar}">Consultas</a>
+                <a th:href="@{/web/unidades-saude}">Postos</a>
                 <a th:href="@{/web/agendas}">Agenda</a>
                 <a th:href="@{/web/avaliacoes}">Avaliações</a>
-                <a th:href="@{/web/funcionarios}">Funcionários</a>
-                <a th:href="@{/web/cadastro}">Cadastro</a>
-                <a th:href="@{/web/login}">Login</a>
+                <a th:if="${session.usuarioTipo == 'FUNCIONARIO'}" th:href="@{/web/funcionarios}">Funcionários</a>
+                <a th:if="${session.usuarioNome == null}" th:href="@{/web/cadastro}">Cadastro</a>
+                <a th:if="${session.usuarioNome == null}" th:href="@{/web/login}">Login</a>
             </div>
             <div class="app-nav__session" th:if="${session.usuarioNome != null}">
                 <span th:text="${session.usuarioNome}">Usuário</span>

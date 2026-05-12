@@ -2,6 +2,7 @@ package com.gaspo.api.controller;
 
 import com.gaspo.api.dto.request.FuncionarioCadastroDTO;
 import com.gaspo.api.service.FuncionarioService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,12 @@ public class FuncionarioWebController {
     }
 
     @GetMapping
-    public String exibirFuncionarios(Model model) {
+    public String exibirFuncionarios(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        if (!"FUNCIONARIO".equals(session.getAttribute("usuarioTipo"))) {
+            redirectAttributes.addFlashAttribute("erro", "Faça login como funcionário para acessar essa área.");
+            return "redirect:/web/login";
+        }
+
         model.addAttribute("funcionarios", funcionarioService.listarTodos());
         return "funcionarios";
     }
@@ -32,8 +38,14 @@ public class FuncionarioWebController {
                             @RequestParam(required = false) String telefone,
                             @RequestParam String senha,
                             @RequestParam(required = false) String cargo,
+                            HttpSession session,
                             RedirectAttributes redirectAttributes) {
         try {
+            if (!"FUNCIONARIO".equals(session.getAttribute("usuarioTipo"))) {
+                redirectAttributes.addFlashAttribute("erro", "Faça login como funcionário para cadastrar funcionários.");
+                return "redirect:/web/login";
+            }
+
             funcionarioService.cadastrar(new FuncionarioCadastroDTO(nome, email, telefone, senha, cargo));
             redirectAttributes.addFlashAttribute("mensagem", "Funcionário cadastrado com sucesso!");
         } catch (Exception e) {

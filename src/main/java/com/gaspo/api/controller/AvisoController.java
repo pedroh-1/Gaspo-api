@@ -1,7 +1,10 @@
 package com.gaspo.api.controller;
 
-import com.gaspo.api.model.gaspo.AvisoModel;
+import com.gaspo.api.dto.request.AvisoRequestDTO;
+import com.gaspo.api.dto.response.AvisoResponseDTO;
+import com.gaspo.api.mapper.AvisoMapper;
 import com.gaspo.api.service.AvisoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,19 +17,24 @@ public class AvisoController {
     @Autowired
     private AvisoService service;
 
+    @Autowired
+    private AvisoMapper mapper;
+
     @GetMapping
-    public List<AvisoModel> listarAvisos() {
-        return service.listarTodos();
+    public List<AvisoResponseDTO> listarAvisos() {
+        return service.listarTodos().stream()
+                .map(mapper::toResponseDTO)
+                .toList();
     }
 
     @PostMapping("/publicar")
-    public AvisoModel publicarAviso(@RequestBody AvisoModel aviso) {
-        return service.publicar(aviso);
+    public AvisoResponseDTO publicarAviso(@Valid @RequestBody AvisoRequestDTO aviso) {
+        return mapper.toResponseDTO(service.publicar(mapper.toModel(aviso)));
     }
 
     @PutMapping("/{id}")
-    public AvisoModel editarAviso(@PathVariable Long id, @RequestBody AvisoModel aviso) {
-        return service.editar(id, aviso);
+    public AvisoResponseDTO editarAviso(@PathVariable Long id, @Valid @RequestBody AvisoRequestDTO aviso) {
+        return mapper.toResponseDTO(service.editar(id, mapper.toModel(aviso)));
     }
 
     @DeleteMapping("/{id}")
