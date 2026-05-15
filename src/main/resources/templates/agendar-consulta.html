@@ -294,16 +294,11 @@
 
     <section class="layout">
         <form class="panel" th:action="@{/web/consultas/agendar}" th:object="${form}" method="post">
-            <h2>Novo Agendamento</h2>
+            <h2>1 - Escolha a Especialidade</h2>
 
             <div class="patient-box" th:if="${pacienteLogado != null}">
                 <strong th:text="${pacienteLogado.nome}">Paciente</strong>
                 <span th:text="'CPF: ' + (${pacienteLogado.cpf} ?: 'não informado')">CPF</span>
-            </div>
-
-            <div class="form-group">
-                <label for="data">Data e hora</label>
-                <input type="datetime-local" id="data" th:field="*{data}" required>
             </div>
 
             <div class="form-group">
@@ -320,7 +315,14 @@
                 </p>
             </div>
 
-            <button class="button-primary" type="submit">Confirmar Agendamento</button>
+            <h2 style="margin-top: 18px;">2 - Escolha o Horário Disponível</h2>
+
+            <div class="form-group">
+                <label for="data">Data e hora</label>
+                <input type="datetime-local" id="data" th:field="*{data}" required>
+            </div>
+
+            <button class="button-primary" type="submit">Prosseguir</button>
         </form>
 
         <div class="stack">

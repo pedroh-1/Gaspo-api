@@ -3,9 +3,21 @@
 <body>
 <div th:fragment="menu">
     <style>
+        :root {
+            --gaspo-bg: #eef4f1;
+            --gaspo-card: #ffffff;
+            --gaspo-ink: #17231f;
+            --gaspo-muted: #718077;
+            --gaspo-line: #dce7e2;
+            --gaspo-green: #2f7d5c;
+            --gaspo-green-dark: #246349;
+            --gaspo-soft: #f6faf8;
+            --gaspo-danger: #b42318;
+        }
+
         .app-nav {
-            background: #ffffff;
-            border-bottom: 1px solid #d6dbe1;
+            background: var(--gaspo-card);
+            border-bottom: 1px solid var(--gaspo-line);
             position: sticky;
             top: 0;
             z-index: 10;
@@ -22,7 +34,8 @@
         }
 
         .app-nav__brand {
-            color: #1f2933;
+            color: var(--gaspo-ink);
+            font-size: 16px;
             font-weight: 800;
             text-decoration: none;
             white-space: nowrap;
@@ -31,6 +44,7 @@
         .app-nav__links {
             display: flex;
             align-items: center;
+            justify-content: flex-end;
             gap: 6px;
             flex-wrap: wrap;
         }
@@ -44,20 +58,25 @@
             cursor: pointer;
             font: inherit;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 600;
             padding: 8px 10px;
             text-decoration: none;
+            text-align: center;
         }
 
         .app-nav__links a:hover,
         .app-nav__logout:hover {
             background: #eef2f5;
+            color: var(--gaspo-green);
         }
 
         .app-nav__session {
-            color: #667085;
+            color: var(--gaspo-muted);
             font-size: 13px;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .app-nav__logout-form {
@@ -68,7 +87,7 @@
             .app-nav__inner {
                 align-items: flex-start;
                 flex-direction: column;
-                padding: 12px 0;
+                padding: 10px 0;
             }
 
             .app-nav__session {
@@ -85,10 +104,9 @@
                 <a th:href="@{/web/consultas/agendar}">Consultas</a>
                 <a th:href="@{/web/unidades-saude}">Postos</a>
                 <a th:href="@{/web/profissionais}">Profissionais</a>
-                <a th:href="@{/web/agendas}">Agenda</a>
                 <a th:href="@{/web/avaliacoes}">Avaliações</a>
+                <a th:if="${session.usuarioTipo == 'FUNCIONARIO'}" th:href="@{/web/agendas}">Agenda</a>
                 <a th:if="${session.usuarioTipo == 'FUNCIONARIO'}" th:href="@{/web/funcionarios}">Funcionários</a>
-                <a th:if="${session.usuarioNome == null}" th:href="@{/web/cadastro}">Cadastro</a>
                 <a th:if="${session.usuarioNome == null}" th:href="@{/web/login}">Login</a>
             </div>
             <div class="app-nav__session" th:if="${session.usuarioNome != null}">

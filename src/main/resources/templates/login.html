@@ -42,12 +42,59 @@
             padding: 22px;
         }
 
-        h1 { margin: 0; font-size: 28px; }
+        h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            text-align: left;
+            font-weight: 800;
+        }
 
         .subtitle {
             margin: 8px 0 22px;
             color: var(--muted);
             font-size: 14px;
+            text-align: left;
+        }
+
+        .role-picker {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .role-picker input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .role-pill {
+            display: block;
+            margin: 0;
+        }
+
+        .role-pill span {
+            display: block;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #fff;
+            color: var(--text);
+            padding: 10px 12px;
+            text-align: center;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .role-picker input:checked + span {
+            background: #e7f5ec;
+            border-color: #b8dfc5;
+            color: var(--primary);
+        }
+
+        .role-picker input:focus + span {
+            outline: 2px solid rgba(31, 122, 92, 0.22);
+            outline-offset: 2px;
         }
 
         label {
@@ -76,7 +123,7 @@
             color: #fff;
             cursor: pointer;
             font: inherit;
-            font-weight: 800;
+            font-weight: 700;
         }
 
         button:hover { background: var(--primary-hover); }
@@ -114,20 +161,32 @@
     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
     <form class="panel" th:action="@{/web/login}" method="post">
-        <h1>Acesso ao GASPO</h1>
-        <p class="subtitle">Use o e-mail e senha de paciente ou funcionário.</p>
+        <h1>GASPO</h1>
+        <p class="subtitle">Entrar como:</p>
+        <div class="role-picker" aria-label="Tipo de acesso">
+            <label class="role-pill">
+                <input type="radio" name="tipoAcesso" value="USUARIO" checked>
+                <span>Usuário</span>
+            </label>
+            <label class="role-pill">
+                <input type="radio" name="tipoAcesso" value="FUNCIONARIO">
+                <span>Funcionário</span>
+            </label>
+        </div>
+
+        <p class="subtitle">Conecte-se para acessar o aplicativo:</p>
 
         <label for="email">E-mail</label>
-        <input id="email" name="email" type="email" required>
+        <input id="email" name="email" type="email" placeholder="seuemail@exemplo.com" required>
 
         <label for="senha">Senha</label>
         <input id="senha" name="senha" type="password" required>
 
-        <button type="submit">Entrar</button>
+        <button type="submit">Login</button>
     </form>
 
     <p class="footer-link">
-        Paciente sem conta? <a th:href="@{/web/cadastro}">Criar cadastro</a>
+        Ainda não tem uma conta? <a th:href="@{/web/cadastro}">Cadastrar-se</a>
     </p>
 </main>
 </body>

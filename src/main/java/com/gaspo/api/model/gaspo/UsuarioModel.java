@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -34,6 +35,9 @@ public class UsuarioModel implements UserDetails {
 
     @Column(name = "nu_telefone")
     private String telefone;
+
+    @Column(name = "dt_nascimento")
+    private LocalDate dataNascimento;
 
     @Column(name = "ds_email", nullable = false, unique = true)
     private String email;

@@ -3,13 +3,15 @@ package com.gaspo.api.controller;
 import com.gaspo.api.dto.request.UsuarioCadastroDTO;
 import com.gaspo.api.model.gaspo.FuncionarioModel;
 import com.gaspo.api.model.gaspo.UsuarioModel;
+import com.gaspo.api.repository.gaspo.FuncionarioRepository;
+import com.gaspo.api.repository.gaspo.UsuarioRepository;
 import com.gaspo.api.security.TokenService;
 import com.gaspo.api.service.PacienteService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.ui.Model;
@@ -24,14 +26,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/web")
 public class AuthWebController {
 
-    private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final PacienteService pacienteService;
+    private final UsuarioRepository usuarioRepository;
+    private final FuncionarioRepository funcionarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthWebController(AuthenticationManager authenticationManager, TokenService tokenService, PacienteService pacienteService) {
-        this.authenticationManager = authenticationManager;
+    public AuthWebController(TokenService tokenService,
+                             PacienteService pacienteService,
+                             UsuarioRepository usuarioRepository,
+                             FuncionarioRepository funcionarioRepository,
+                             PasswordEncoder passwordEncoder) {
         this.tokenService = tokenService;
         this.pacienteService = pacienteService;
+        this.usuarioRepository = usuarioRepository;
+        this.funcionarioRepository = funcionarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping({"/", "/login"})
@@ -42,7 +52,7 @@ public class AuthWebController {
     @GetMapping("/cadastro")
     public String exibirCadastro(Model model) {
         if (!model.containsAttribute("cadastro")) {
-            model.addAttribute("cadastro", new UsuarioCadastroDTO("", "", "", ""));
+            model.addAttribute("cadastro", new UsuarioCadastroDTO("", "", null, "", "", ""));
         }
         return "cadastro-paciente";
     }
@@ -71,12 +81,11 @@ public class AuthWebController {
     @PostMapping("/login")
     public String login(@RequestParam String email,
                         @RequestParam String senha,
+                        @RequestParam(defaultValue = "USUARIO") String tipoAcesso,
                         HttpSession session,
                         RedirectAttributes redirectAttributes) {
         try {
-            var authRequest = new UsernamePasswordAuthenticationToken(email, senha);
-            var auth = authenticationManager.authenticate(authRequest);
-            UserDetails principal = (UserDetails) auth.getPrincipal();
+            UserDetails principal = buscarPrincipal(email, senha, tipoAcesso);
 
             session.setAttribute("token", tokenService.generateToken(principal));
             session.setAttribute("usuarioEmail", principal.getUsername());
@@ -87,7 +96,7 @@ public class AuthWebController {
             redirectAttributes.addFlashAttribute("mensagem", "Login realizado com sucesso!");
             return "redirect:/web/avisos";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", "E-mail ou senha inválidos.");
+            redirectAttributes.addFlashAttribute("erro", "E-mail, senha ou tipo de acesso inválidos.");
             return "redirect:/web/login";
         }
     }
@@ -114,6 +123,22 @@ public class AuthWebController {
             return "FUNCIONARIO";
         }
         return "USUARIO";
+    }
+
+    private UserDetails buscarPrincipal(String email, String senha, String tipoAcesso) {
+        UserDetails principal = "FUNCIONARIO".equalsIgnoreCase(tipoAcesso)
+                ? funcionarioRepository.findByEmail(email)
+                    .map(UserDetails.class::cast)
+                    .orElseThrow(() -> new BadCredentialsException("Funcionário não encontrado."))
+                : usuarioRepository.findByEmail(email)
+                    .map(UserDetails.class::cast)
+                    .orElseThrow(() -> new BadCredentialsException("Usuário não encontrado."));
+
+        if (!passwordEncoder.matches(senha, principal.getPassword())) {
+            throw new BadCredentialsException("Credenciais inválidas.");
+        }
+
+        return principal;
     }
 
     private void preencherIdsDaSessao(HttpSession session, UserDetails principal) {

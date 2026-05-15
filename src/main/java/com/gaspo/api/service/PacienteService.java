@@ -44,6 +44,8 @@ public class PacienteService {
         UsuarioModel usuario = new UsuarioModel();
         usuario.setNome(dto.nome());
         usuario.setCpf(dto.cpf());
+        usuario.setDataNascimento(dto.dataNascimento());
+        usuario.setTelefone(dto.telefone());
         usuario.setEmail(dto.email());
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
 

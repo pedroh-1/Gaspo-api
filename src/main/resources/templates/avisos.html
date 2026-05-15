@@ -293,7 +293,8 @@
     <header class="header">
         <div>
             <h1>Avisos</h1>
-            <p class="subtitle">Publique comunicados e acompanhe os avisos disponíveis.</p>
+            <p class="subtitle" th:if="${session.usuarioTipo != 'FUNCIONARIO'}">Fique por dentro de todas as novidades e comunicados importantes.</p>
+            <p class="subtitle" th:if="${session.usuarioTipo == 'FUNCIONARIO'}">Publique comunicados e acompanhe-os.</p>
         </div>
     </header>
 
@@ -328,7 +329,7 @@
         </div>
 
         <div class="panel">
-            <h2>Avisos Publicados</h2>
+            <h2 th:text="${session.usuarioTipo == 'FUNCIONARIO' ? 'Avisos Publicados' : 'Comunicados'}">Avisos Publicados</h2>
 
             <div th:if="${#lists.isEmpty(avisos)}" class="empty">
                 Nenhum aviso publicado.
