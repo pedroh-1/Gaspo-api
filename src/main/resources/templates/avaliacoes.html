@@ -7,17 +7,17 @@
     <style>
         :root {
             color-scheme: light;
-            --bg: #f4f6f8;
+            --bg: #eef4f1;
             --surface: #ffffff;
-            --text: #1f2933;
-            --muted: #697386;
-            --border: #d8dee6;
-            --primary: #176448;
-            --primary-hover: #104c36;
+            --text: #17231f;
+            --muted: #718077;
+            --border: #dce7e2;
+            --primary: #2f7d5c;
+            --primary-hover: #246349;
             --danger-bg: #fce8e6;
             --danger-text: #9b1c1c;
-            --success-bg: #e7f5ec;
-            --success-text: #176448;
+            --success-bg: #e8f5ef;
+            --success-text: #246349;
             --star: #b7791f;
         }
 
@@ -138,7 +138,7 @@
         }
 
         .button.secondary:hover {
-            background: #eef2f5;
+            background: #f6faf8;
         }
 
         .alert {
@@ -199,8 +199,8 @@
         .patient-box {
             border: 1px solid var(--border);
             border-radius: 8px;
-            background: #f8fafb;
-            color: #344054;
+            background: #f6faf8;
+            color: #31443c;
             font-size: 14px;
             line-height: 1.45;
             margin-bottom: 14px;
@@ -232,7 +232,7 @@
 <main class="page">
     <header class="header">
         <div>
-            <h1>Avaliações dos médicos</h1>
+            <h1><span aria-hidden="true">★</span> Avaliações dos médicos</h1>
             <p class="subtitle">Registre avaliações dos pacientes e consulte o histórico por profissional.</p>
         </div>
         <a class="button secondary" href="/web/avisos">Avisos</a>
@@ -275,7 +275,7 @@
                 <textarea id="comentario" th:field="*{comentario}" maxlength="500"></textarea>
 
                 <div class="actions">
-                    <button type="submit">Publicar avaliação</button>
+                    <button type="submit">★ Publicar avaliação</button>
                 </div>
             </form>
         </div>
@@ -294,7 +294,7 @@
                     </option>
                 </select>
                 <div class="actions">
-                    <button type="submit">Filtrar</button>
+                    <button type="submit">⌕ Filtrar</button>
                     <a class="button secondary" href="/web/avaliacoes">Limpar</a>
                 </div>
             </form>

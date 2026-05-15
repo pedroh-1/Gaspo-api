@@ -6,18 +6,18 @@
     <title>Agenda</title>
     <style>
         :root {
-            --bg: #f5f7f9;
+            --bg: #eef4f1;
             --surface: #ffffff;
-            --text: #1f2933;
-            --muted: #667085;
-            --border: #d6dbe1;
-            --primary: #1f7a5c;
-            --primary-hover: #176448;
+            --text: #17231f;
+            --muted: #718077;
+            --border: #dce7e2;
+            --primary: #2f7d5c;
+            --primary-hover: #246349;
             --danger: #b42318;
             --danger-bg: #fce8e6;
             --danger-text: #9b1c1c;
-            --success-bg: #e7f5ec;
-            --success-text: #176448;
+            --success-bg: #e8f5ef;
+            --success-text: #246349;
         }
 
         * { box-sizing: border-box; }
@@ -137,7 +137,7 @@
 
 <main class="page">
     <header class="header">
-        <h1>Agenda de atendimento</h1>
+        <h1><span aria-hidden="true">🕒</span> Agenda de atendimento</h1>
         <p class="subtitle">Gere horários por profissional e controle a disponibilidade.</p>
     </header>
 
@@ -166,7 +166,7 @@
             <label for="horarios">Horários</label>
             <input id="horarios" name="horarios" placeholder="08:00, 08:30, 09:00" required>
 
-            <button type="submit">Gerar horários</button>
+            <button type="submit">🕒 Gerar horários</button>
         </form>
 
         <section class="panel">
@@ -201,10 +201,10 @@
                                                 th:text="${status}">
                                         </option>
                                     </select>
-                                    <button type="submit">Salvar</button>
+                                    <button type="submit">✓ Salvar</button>
                                 </form>
                                 <form th:action="@{/web/agendas/{id}/remover(id=${agenda.id})}" method="post">
-                                    <button class="danger" type="submit">Remover</button>
+                                    <button class="danger" type="submit">🗑 Remover</button>
                                 </form>
                             </div>
                         </td>

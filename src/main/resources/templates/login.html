@@ -6,17 +6,17 @@
     <title>Login</title>
     <style>
         :root {
-            --bg: #f5f7f9;
+            --bg: #eef4f1;
             --surface: #ffffff;
-            --text: #1f2933;
-            --muted: #667085;
-            --border: #d6dbe1;
-            --primary: #1f7a5c;
-            --primary-hover: #176448;
+            --text: #17231f;
+            --muted: #718077;
+            --border: #dce7e2;
+            --primary: #2f7d5c;
+            --primary-hover: #246349;
             --danger-bg: #fce8e6;
             --danger-text: #9b1c1c;
-            --success-bg: #e7f5ec;
-            --success-text: #176448;
+            --success-bg: #e8f5ef;
+            --success-text: #246349;
         }
 
         * { box-sizing: border-box; }
@@ -87,13 +87,13 @@
         }
 
         .role-picker input:checked + span {
-            background: #e7f5ec;
-            border-color: #b8dfc5;
+            background: #e8f5ef;
+            border-color: #b9ded0;
             color: var(--primary);
         }
 
         .role-picker input:focus + span {
-            outline: 2px solid rgba(31, 122, 92, 0.22);
+            outline: 2px solid rgba(47, 125, 92, 0.22);
             outline-offset: 2px;
         }
 
@@ -161,7 +161,7 @@
     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
     <form class="panel" th:action="@{/web/login}" method="post">
-        <h1>GASPO</h1>
+        <h1><span aria-hidden="true">✚</span> GASPO</h1>
         <p class="subtitle">Entrar como:</p>
         <div class="role-picker" aria-label="Tipo de acesso">
             <label class="role-pill">
@@ -182,7 +182,7 @@
         <label for="senha">Senha</label>
         <input id="senha" name="senha" type="password" required>
 
-        <button type="submit">Login</button>
+        <button type="submit">↪ Login</button>
     </form>
 
     <p class="footer-link">

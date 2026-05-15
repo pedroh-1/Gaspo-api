@@ -6,18 +6,18 @@
     <title>Profissionais</title>
     <style>
         :root {
-            --bg: #f5f7f9;
+            --bg: #eef4f1;
             --surface: #ffffff;
-            --text: #1f2933;
-            --muted: #667085;
-            --border: #d6dbe1;
-            --primary: #1f7a5c;
-            --primary-hover: #176448;
+            --text: #17231f;
+            --muted: #718077;
+            --border: #dce7e2;
+            --primary: #2f7d5c;
+            --primary-hover: #246349;
             --danger: #b42318;
             --danger-bg: #fce8e6;
             --danger-text: #9b1c1c;
-            --success-bg: #e7f5ec;
-            --success-text: #176448;
+            --success-bg: #e8f5ef;
+            --success-text: #246349;
         }
 
         * { box-sizing: border-box; }
@@ -98,26 +98,69 @@
         .alert-success { background: var(--success-bg); color: var(--success-text); }
         .alert-danger { background: var(--danger-bg); color: var(--danger-text); }
 
-        .table-wrap { overflow-x: auto; }
-
-        table {
-            width: 100%;
-            min-width: 780px;
-            border-collapse: collapse;
+        .professional-list {
+            display: grid;
+            gap: 12px;
         }
 
-        th, td {
-            border-bottom: 1px solid var(--border);
-            padding: 12px 10px;
-            text-align: left;
-            vertical-align: top;
-            font-size: 14px;
+        .professional-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            padding: 16px;
         }
 
-        th {
+        .professional-card__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .professional-card h3 {
+            margin: 0;
+            color: var(--text);
+            font-size: 17px;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        .status-badge {
+            flex: 0 0 auto;
+            border-radius: 999px;
+            background: var(--success-bg);
+            color: var(--success-text);
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .professional-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 10px 16px;
+            margin: 0;
+        }
+
+        .professional-details div {
+            min-width: 0;
+        }
+
+        .professional-details dt {
             color: var(--muted);
             font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 3px;
             text-transform: uppercase;
+        }
+
+        .professional-details dd {
+            color: #31443c;
+            font-size: 14px;
+            line-height: 1.45;
+            margin: 0;
+            overflow-wrap: anywhere;
         }
 
         .actions {
@@ -125,6 +168,9 @@
             gap: 8px;
             flex-wrap: wrap;
             align-items: center;
+            border-top: 1px solid var(--border);
+            margin-top: 14px;
+            padding-top: 14px;
         }
 
         .actions form { margin: 0; }
@@ -150,7 +196,7 @@
 
 <main class="page">
     <header class="header">
-        <h1>Especialistas</h1>
+        <h1><span aria-hidden="true">🩺</span> Especialistas</h1>
         <p class="subtitle">Cadastre profissionais, vincule unidades de saúde e acompanhe o status de atendimento.</p>
     </header>
 
@@ -189,7 +235,7 @@
                 </option>
             </select>
 
-            <button type="submit" style="margin-top: 16px;">Cadastrar</button>
+            <button type="submit" style="margin-top: 16px;">＋ Cadastrar</button>
         </form>
 
         <section class="panel">
@@ -198,51 +244,52 @@
                 Nenhum profissional cadastrado.
             </div>
 
-            <div class="table-wrap" th:unless="${#lists.isEmpty(profissionais)}">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Especialidade</th>
-                        <th>Unidade</th>
-                        <th>Status</th>
-                        <th th:if="${session.usuarioTipo == 'FUNCIONARIO'}">Ações</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="profissional : ${profissionais}">
-                        <td>
-                            <strong th:text="${profissional.nome}">Nome</strong><br>
-                            <span th:text="${profissional.email ?: 'E-mail não informado'}">E-mail</span><br>
-                            <span th:text="${profissional.telefone ?: 'Telefone não informado'}">Telefone</span>
-                        </td>
-                        <td th:text="${profissional.especialidade ?: 'Geral'}">Especialidade</td>
-                        <td>
-                            <span th:text="${profissional.unidadeSaude != null ? profissional.unidadeSaude.nome : 'Não vinculada'}">Unidade</span><br>
-                            <span th:if="${profissional.unidadeSaude != null && profissional.unidadeSaude.endereco != null}"
-                                  th:text="${profissional.unidadeSaude.endereco}">Localização</span>
-                        </td>
-                        <td th:text="${profissional.status}">ATENDENDO</td>
-                        <td th:if="${session.usuarioTipo == 'FUNCIONARIO'}">
-                            <div class="actions">
-                                <form th:action="@{/web/profissionais/{id}/status(id=${profissional.id})}" method="post">
-                                    <select name="status">
-                                        <option th:each="status : ${statusProfissional}"
-                                                th:value="${status}"
-                                                th:selected="${status == profissional.status}"
-                                                th:text="${status}">
-                                        </option>
-                                    </select>
-                                    <button type="submit">Salvar</button>
-                                </form>
-                                <form th:action="@{/web/profissionais/{id}/remover(id=${profissional.id})}" method="post">
-                                    <button class="danger" type="submit">Remover</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div class="professional-list" th:unless="${#lists.isEmpty(profissionais)}">
+                <article class="professional-card" th:each="profissional : ${profissionais}">
+                    <div class="professional-card__header">
+                        <h3 th:text="${profissional.nome}">Nome</h3>
+                        <span class="status-badge" th:text="${profissional.status}">ATENDENDO</span>
+                    </div>
+
+                    <dl class="professional-details">
+                        <div>
+                            <dt>Especialidade</dt>
+                            <dd th:text="${profissional.especialidade ?: 'Geral'}">Especialidade</dd>
+                        </div>
+                        <div>
+                            <dt>E-mail</dt>
+                            <dd th:text="${profissional.email ?: 'E-mail não informado'}">E-mail</dd>
+                        </div>
+                        <div>
+                            <dt>Telefone</dt>
+                            <dd th:text="${profissional.telefone ?: 'Telefone não informado'}">Telefone</dd>
+                        </div>
+                        <div>
+                            <dt>Unidade</dt>
+                            <dd th:text="${profissional.unidadeSaude != null ? profissional.unidadeSaude.nome : 'Não vinculada'}">Unidade</dd>
+                        </div>
+                        <div th:if="${profissional.unidadeSaude != null && profissional.unidadeSaude.endereco != null}">
+                            <dt>Localização</dt>
+                            <dd th:text="${profissional.unidadeSaude.endereco}">Localização</dd>
+                        </div>
+                    </dl>
+
+                    <div class="actions" th:if="${session.usuarioTipo == 'FUNCIONARIO'}">
+                        <form th:action="@{/web/profissionais/{id}/status(id=${profissional.id})}" method="post">
+                            <select name="status" aria-label="Status do profissional">
+                                <option th:each="status : ${statusProfissional}"
+                                        th:value="${status}"
+                                        th:selected="${status == profissional.status}"
+                                        th:text="${status}">
+                                </option>
+                            </select>
+                            <button type="submit">✓ Salvar</button>
+                        </form>
+                        <form th:action="@{/web/profissionais/{id}/remover(id=${profissional.id})}" method="post">
+                            <button class="danger" type="submit">🗑 Remover</button>
+                        </form>
+                    </div>
+                </article>
             </div>
         </section>
     </section>

@@ -7,17 +7,17 @@
     <style>
         :root {
             color-scheme: light;
-            --bg: #f5f7f9;
+            --bg: #eef4f1;
             --surface: #ffffff;
-            --text: #1f2933;
-            --muted: #667085;
-            --border: #d6dbe1;
-            --primary: #1f7a5c;
-            --primary-hover: #176448;
+            --text: #17231f;
+            --muted: #718077;
+            --border: #dce7e2;
+            --primary: #2f7d5c;
+            --primary-hover: #246349;
             --danger-bg: #fce8e6;
             --danger-text: #9b1c1c;
-            --success-bg: #e7f5ec;
-            --success-text: #176448;
+            --success-bg: #e8f5ef;
+            --success-text: #246349;
         }
 
         * {
@@ -85,7 +85,7 @@
         label {
             display: block;
             margin-bottom: 6px;
-            color: #344054;
+            color: #31443c;
             font-size: 14px;
             font-weight: 700;
         }
@@ -108,7 +108,7 @@
 
         input[type="text"]:focus,
         textarea:focus {
-            outline: 2px solid rgba(31, 122, 92, 0.18);
+            outline: 2px solid rgba(47, 125, 92, 0.18);
             border-color: var(--primary);
         }
 
@@ -117,7 +117,7 @@
             align-items: center;
             gap: 8px;
             margin: 2px 0 16px;
-            color: #344054;
+            color: #31443c;
             font-size: 14px;
         }
 
@@ -191,7 +191,7 @@
         .alert-success {
             background: var(--success-bg);
             color: var(--success-text);
-            border: 1px solid #b8dfc5;
+            border: 1px solid #b9ded0;
         }
 
         .alert-danger {
@@ -235,7 +235,7 @@
 
         .notice p {
             margin: 0;
-            color: #344054;
+            color: #31443c;
             font-size: 14px;
             line-height: 1.5;
             overflow-wrap: anywhere;
@@ -247,8 +247,8 @@
             margin-top: 12px;
             border-radius: 999px;
             padding: 4px 8px;
-            background: #eef2f6;
-            color: #475467;
+            background: #f6faf8;
+            color: #5e6f66;
             font-size: 12px;
             font-weight: 700;
         }
@@ -292,7 +292,7 @@
 <main class="page">
     <header class="header">
         <div>
-            <h1>Avisos</h1>
+            <h1><span aria-hidden="true">🔔</span> Avisos</h1>
             <p class="subtitle" th:if="${session.usuarioTipo != 'FUNCIONARIO'}">Fique por dentro de todas as novidades e comunicados importantes.</p>
             <p class="subtitle" th:if="${session.usuarioTipo == 'FUNCIONARIO'}">Publique comunicados e acompanhe-os.</p>
         </div>
@@ -320,7 +320,7 @@
                 Ativo
             </label>
 
-            <button type="submit">Publicar</button>
+            <button type="submit">＋ Publicar</button>
         </form>
 
         <div class="panel" th:if="${session.usuarioTipo != 'FUNCIONARIO'}">
@@ -360,7 +360,7 @@
                         </label>
                         <input type="hidden" name="_ativo" value="on">
                         <div class="inline-actions">
-                            <button type="submit">Atualizar</button>
+                            <button type="submit">↻ Atualizar</button>
                         </div>
                     </form>
 
@@ -368,7 +368,7 @@
                           th:if="${session.usuarioTipo == 'FUNCIONARIO'}"
                           th:action="@{/web/avisos/{id}/remover(id=${item.id})}"
                           method="post">
-                        <button class="danger" type="submit">Remover</button>
+                        <button class="danger" type="submit">🗑 Remover</button>
                     </form>
                 </article>
             </div>
