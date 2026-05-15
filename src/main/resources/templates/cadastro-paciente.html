@@ -117,8 +117,11 @@
     <form class="panel" th:action="@{/web/cadastro}" th:object="${cadastro}" method="post">
         <h1>Cadastro de paciente</h1>
         <p class="subtitle">
-            O cadastro só é liberado quando o CPF já existe na base do e-SUS.
+            Crie sua conta para acessar agendamentos, avisos e demais serviços do GASPO.
         </p>
+
+        <label for="nome">Nome completo</label>
+        <input id="nome" th:field="*{nome}" required>
 
         <label for="cpf">CPF</label>
         <input id="cpf" th:field="*{cpf}" inputmode="numeric" placeholder="Somente números" required>

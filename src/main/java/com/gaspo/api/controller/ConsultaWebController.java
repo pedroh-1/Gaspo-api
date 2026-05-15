@@ -5,6 +5,7 @@ import com.gaspo.api.dto.request.ConsultaFormDTO;
 import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.repository.gaspo.UsuarioRepository;
 import com.gaspo.api.service.ConsultaService;
+import com.gaspo.api.service.ProfissionalService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,9 @@ public class ConsultaWebController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ProfissionalService profissionalService;
 
     @GetMapping("/agendar")
     public String exibirFormulario(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -59,7 +63,7 @@ public class ConsultaWebController {
 
             ConsultaAgendamentoRequestDTO requestDTO = new ConsultaAgendamentoRequestDTO(
                     dataConvertida,
-                    form.getLotacaoId()
+                    form.getProfissionalId()
             );
 
             consultaService.agendarParaUsuarioLogado(requestDTO, usuarioLogado);
@@ -93,7 +97,7 @@ public class ConsultaWebController {
     private void preencherModelo(Model model, ConsultaFormDTO form, UsuarioModel usuarioLogado) {
         model.addAttribute("form", form);
         model.addAttribute("pacienteLogado", usuarioLogado);
-        model.addAttribute("lotacoes", consultaService.listarLotacoesResumo());
+        model.addAttribute("profissionais", profissionalService.listarTodos());
         model.addAttribute("agendamentosAtivos", consultaService.listarAgendamentosAtivosDoUsuario(usuarioLogado, PageRequest.of(0, 20)).content());
         model.addAttribute("historico", consultaService.listarHistoricoDoUsuario(usuarioLogado, PageRequest.of(0, 20)).content());
     }

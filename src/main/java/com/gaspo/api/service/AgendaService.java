@@ -3,8 +3,8 @@ package com.gaspo.api.service;
 
 
 import com.gaspo.api.model.enums.Disponibilidade;
-import com.gaspo.api.model.esus.ProfissionalModel;
 import com.gaspo.api.model.gaspo.AgendaModel;
+import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.repository.gaspo.AgendaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
@@ -39,7 +39,6 @@ public class AgendaService {
             throw new IllegalArgumentException("Data é obrigatória");
         }
 
-        // Implementação do 'loop [para cada horário]' do diagrama de sequência [cite: 342]
         for (LocalTime hora : horarios) {
             AgendaModel slot = new AgendaModel();
             slot.setProfissionalId(profissional.getId());
@@ -51,14 +50,6 @@ public class AgendaService {
             // Operação 'adicionarHorario()' do diagrama [cite: 344]
             agendaRepository.save(slot);
         }
-
-        // Chamada para a sincronização externa exigida pelo projeto
-        sincronizarComPecESus();
-    }
-
-    private void sincronizarComPecESus() {
-        // Placeholder para a integração com o banco do PEC e-SUS v5.4.33
-        System.out.println("Sincronizando agenda com o sistema PEC e-SUS...");
     }
 
     public List<AgendaModel> listarTodos() {
@@ -84,6 +75,8 @@ public class AgendaService {
         existe.setDisponibilidade(agendaAtualizada.getDisponibilidade());
         existe.setData(agendaAtualizada.getData());
         existe.setHorario(agendaAtualizada.getHorario());
+        existe.setProfissionalId(agendaAtualizada.getProfissionalId());
+        existe.setProfissionalNome(agendaAtualizada.getProfissionalNome());
 
         return agendaRepository.save(existe);
     }

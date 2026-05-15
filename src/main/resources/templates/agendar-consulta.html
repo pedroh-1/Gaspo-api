@@ -307,16 +307,16 @@
             </div>
 
             <div class="form-group">
-                <label for="lotacaoId">Profissional / Unidade</label>
-                <select id="lotacaoId" th:field="*{lotacaoId}" required>
+                <label for="profissionalId">Profissional / Unidade</label>
+                <select id="profissionalId" th:field="*{profissionalId}" required>
                     <option value="" disabled selected>Selecione um profissional</option>
-                    <option th:each="lotacao : ${lotacoes}"
-                            th:value="${lotacao.id}"
-                            th:text="${lotacao.nomeProfissional + ' - ' + (lotacao.especialidadeProfissional ?: 'Geral') + ' - ' + lotacao.nomeUnidade + (lotacao.enderecoUnidade != null ? ' - ' + lotacao.enderecoUnidade : '')}">
+                    <option th:each="profissional : ${profissionais}"
+                            th:value="${profissional.id}"
+                            th:text="${profissional.nome + ' - ' + (profissional.especialidade ?: 'Geral') + (profissional.unidadeSaude != null ? ' - ' + profissional.unidadeSaude.nome : '') + (profissional.unidadeSaude != null && profissional.unidadeSaude.endereco != null ? ' - ' + profissional.unidadeSaude.endereco : '')}">
                     </option>
                 </select>
                 <p class="location-hint">
-                    A localização do posto aparece junto ao profissional selecionado quando estiver cadastrada no e-SUS.
+                    A localização do posto aparece junto ao profissional selecionado quando estiver cadastrada no GASPO.
                 </p>
             </div>
 
@@ -334,7 +334,7 @@
                 <div th:unless="${#lists.isEmpty(agendamentosAtivos)}" class="cards">
                     <article class="consultation" th:each="consulta : ${agendamentosAtivos}">
                         <div class="consultation-header">
-                            <h3 th:text="${consulta.lotacao != null ? consulta.lotacao.nomeProfissional : 'Profissional não informado'}">
+                            <h3 th:text="${consulta.nomeProfissional ?: 'Profissional não informado'}">
                                 Profissional
                             </h3>
                             <time class="date"
@@ -345,11 +345,10 @@
                         </div>
 
                         <div class="details">
-                            <span th:text="'Unidade: ' + (${consulta.lotacao != null ? consulta.lotacao.nomeUnidade : 'Não informada'})">Unidade</span>
-                            <span th:if="${consulta.lotacao != null && consulta.lotacao.enderecoUnidade != null}"
-                                  th:text="'Localização: ' + ${consulta.lotacao.enderecoUnidade}">Localização</span>
-                            <span th:text="'Paciente: ' + (${consulta.prontuario != null ? consulta.prontuario.nomePaciente : 'Não informado'})">Paciente</span>
-                            <span th:text="'Prontuário: ' + (${consulta.prontuario != null ? consulta.prontuario.id : 'Não informado'})">Prontuário</span>
+                            <span th:text="'Unidade: ' + (${consulta.nomeUnidade ?: 'Não informada'})">Unidade</span>
+                            <span th:if="${consulta.enderecoUnidade != null}"
+                                  th:text="'Localização: ' + ${consulta.enderecoUnidade}">Localização</span>
+                            <span th:text="'Paciente: ' + (${consulta.nomePaciente ?: 'Não informado'})">Paciente</span>
                         </div>
 
                         <span class="status">Agendada</span>
@@ -374,7 +373,7 @@
                 <div th:unless="${#lists.isEmpty(historico)}" class="cards">
                     <article class="consultation" th:each="consulta : ${historico}">
                         <div class="consultation-header">
-                            <h3 th:text="${consulta.lotacao != null ? consulta.lotacao.nomeProfissional : 'Profissional não informado'}">
+                            <h3 th:text="${consulta.nomeProfissional ?: 'Profissional não informado'}">
                                 Profissional
                             </h3>
                             <time class="date"
@@ -385,15 +384,14 @@
                         </div>
 
                         <div class="details">
-                            <span th:text="'Unidade: ' + (${consulta.lotacao != null ? consulta.lotacao.nomeUnidade : 'Não informada'})">Unidade</span>
-                            <span th:if="${consulta.lotacao != null && consulta.lotacao.enderecoUnidade != null}"
-                                  th:text="'Localização: ' + ${consulta.lotacao.enderecoUnidade}">Localização</span>
-                            <span th:text="'Paciente: ' + (${consulta.prontuario != null ? consulta.prontuario.nomePaciente : 'Não informado'})">Paciente</span>
-                            <span th:text="'Prontuário: ' + (${consulta.prontuario != null ? consulta.prontuario.id : 'Não informado'})">Prontuário</span>
+                            <span th:text="'Unidade: ' + (${consulta.nomeUnidade ?: 'Não informada'})">Unidade</span>
+                            <span th:if="${consulta.enderecoUnidade != null}"
+                                  th:text="'Localização: ' + ${consulta.enderecoUnidade}">Localização</span>
+                            <span th:text="'Paciente: ' + (${consulta.nomePaciente ?: 'Não informado'})">Paciente</span>
                         </div>
 
                         <span class="status"
-                              th:text="${consulta.status == 0 ? 'Agendada' : (consulta.status == 4 ? 'Cancelada' : 'Status ' + consulta.status)}">
+                              th:text="${consulta.status}">
                             Status
                         </span>
                     </article>

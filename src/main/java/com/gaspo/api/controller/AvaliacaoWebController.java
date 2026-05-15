@@ -59,7 +59,7 @@ public class AvaliacaoWebController {
             avaliacaoService.avaliar(new AvaliacaoRequestDTO(
                     form.getNota(),
                     form.getComentario(),
-                    pacienteLogado.getIdCidadaoEsus(),
+                    pacienteLogado.getId(),
                     form.getProfissionalId()
             ));
             redirectAttributes.addFlashAttribute("mensagem", "Avaliação registrada com sucesso!");

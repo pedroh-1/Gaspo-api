@@ -42,7 +42,7 @@ public class AuthWebController {
     @GetMapping("/cadastro")
     public String exibirCadastro(Model model) {
         if (!model.containsAttribute("cadastro")) {
-            model.addAttribute("cadastro", new UsuarioCadastroDTO("", "", ""));
+            model.addAttribute("cadastro", new UsuarioCadastroDTO("", "", "", ""));
         }
         return "cadastro-paciente";
     }
@@ -119,7 +119,6 @@ public class AuthWebController {
     private void preencherIdsDaSessao(HttpSession session, UserDetails principal) {
         if (principal instanceof UsuarioModel usuario) {
             session.setAttribute("usuarioId", usuario.getId());
-            session.setAttribute("idCidadaoEsus", usuario.getIdCidadaoEsus());
         }
         if (principal instanceof FuncionarioModel funcionario) {
             session.setAttribute("funcionarioId", funcionario.getId());

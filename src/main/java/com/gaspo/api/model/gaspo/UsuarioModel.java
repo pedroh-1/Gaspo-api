@@ -29,15 +29,17 @@ public class UsuarioModel implements UserDetails {
     @Column(name = "nu_cpf", unique = true)
     private String cpf;
 
+    @Column(name = "nu_cns", unique = true)
+    private String cns;
+
+    @Column(name = "nu_telefone")
+    private String telefone;
+
     @Column(name = "ds_email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "ds_senha", nullable = false)
     private String senha;
-
-    // Relacionamento lógico com o banco do e-SUS
-    @Column(name = "co_seq_cidadao_esus", nullable = false, unique = true)
-    private Long idCidadaoEsus;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

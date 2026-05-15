@@ -20,7 +20,7 @@ RUN apk add --no-cache postgresql-client
 COPY --from=build /app/target/*.jar app.jar
 
 ENV SERVER_PORT=8081
-ENV WAIT_FOR_DB_HOSTS=postgres_esus:5432,postgres_gaspo:5432
+ENV WAIT_FOR_DB_HOSTS=postgres_gaspo:5432
 
 EXPOSE 8081
 

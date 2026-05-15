@@ -11,6 +11,6 @@ public record ConsultaAgendamentoRequestDTO(
         Date data,
 
         @NotNull
-        Long lotacaoId
+        Long profissionalId
 ) {
 }

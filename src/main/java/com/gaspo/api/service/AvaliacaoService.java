@@ -2,13 +2,12 @@ package com.gaspo.api.service;
 
 import com.gaspo.api.dto.request.AvaliacaoRequestDTO;
 import com.gaspo.api.dto.response.AvaliacaoResponseDTO;
-import com.gaspo.api.model.esus.PacienteModel;
-import com.gaspo.api.model.esus.ProfissionalModel;
 import com.gaspo.api.model.gaspo.AvaliacaoModel;
-import com.gaspo.api.repository.esus.PacienteRepository;
-import com.gaspo.api.repository.esus.ProfissionalRepository;
+import com.gaspo.api.model.gaspo.ProfissionalModel;
+import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.repository.gaspo.AvaliacaoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gaspo.api.repository.gaspo.ProfissionalRepository;
+import com.gaspo.api.repository.gaspo.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -17,14 +16,17 @@ import java.util.List;
 @Service
 public class AvaliacaoService {
 
-    @Autowired
-    private AvaliacaoRepository repository;
+    private final AvaliacaoRepository repository;
+    private final UsuarioRepository usuarioRepository;
+    private final ProfissionalRepository profissionalRepository;
 
-    @Autowired
-    private PacienteRepository pacienteRepository;
-
-    @Autowired
-    private ProfissionalRepository profissionalRepository;
+    public AvaliacaoService(AvaliacaoRepository repository,
+                            UsuarioRepository usuarioRepository,
+                            ProfissionalRepository profissionalRepository) {
+        this.repository = repository;
+        this.usuarioRepository = usuarioRepository;
+        this.profissionalRepository = profissionalRepository;
+    }
 
     public AvaliacaoModel salvar(AvaliacaoModel avaliacao) {
         validarPacienteEProfissional(avaliacao.getPacienteId(), avaliacao.getProfissionalId());
@@ -61,8 +63,8 @@ public class AvaliacaoService {
     }
 
     public AvaliacaoResponseDTO toResponse(AvaliacaoModel avaliacao) {
-        PacienteModel paciente = avaliacao.getPacienteId() != null
-                ? pacienteRepository.findById(avaliacao.getPacienteId()).orElse(null)
+        UsuarioModel paciente = avaliacao.getPacienteId() != null
+                ? usuarioRepository.findById(avaliacao.getPacienteId()).orElse(null)
                 : null;
         ProfissionalModel profissional = avaliacao.getProfissionalId() != null
                 ? profissionalRepository.findById(avaliacao.getProfissionalId()).orElse(null)
@@ -88,7 +90,7 @@ public class AvaliacaoService {
         if (profissionalId == null) {
             throw new RuntimeException("Profissional é obrigatório");
         }
-        pacienteRepository.findById(pacienteId)
+        usuarioRepository.findById(pacienteId)
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
         profissionalRepository.findById(profissionalId)
                 .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));

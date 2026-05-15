@@ -1,8 +1,9 @@
 package com.gaspo.api.controller;
 
-import com.gaspo.api.model.esus.ProfissionalModel;
+import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.service.AgendaService;
+import com.gaspo.api.service.ProfissionalService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,11 @@ import java.util.List;
 public class AgendaController {
 
     private final AgendaService agendaService;
+    private final ProfissionalService profissionalService;
 
-    public AgendaController(AgendaService agendaService) {
+    public AgendaController(AgendaService agendaService, ProfissionalService profissionalService) {
         this.agendaService = agendaService;
+        this.profissionalService = profissionalService;
     }
 
     /**
@@ -32,15 +35,13 @@ public class AgendaController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
             @RequestBody List<LocalTime> horarios) {
 
-        // Aqui buscaríamos o profissional pelo ID (usando o service do grupo correspondente)
-        // Por enquanto, simulamos passando um novo profissional
-        ProfissionalModel prof = new ProfissionalModel();
-        prof.setId(profissionalId);
+        ProfissionalModel prof = profissionalService.buscarPorId(profissionalId)
+                .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
 
         agendaService.gerarGradeHoraria(prof, data, horarios);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Grade horária gerada com sucesso e sincronizada com e-SUS!");
+                .body("Grade horária gerada com sucesso!");
     }
 
     // --- MÉTODOS CRUD BÁSICOS ---

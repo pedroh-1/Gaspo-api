@@ -12,6 +12,12 @@
             --muted: #667085;
             --border: #d6dbe1;
             --primary: #1f7a5c;
+            --primary-hover: #176448;
+            --danger: #b42318;
+            --danger-bg: #fce8e6;
+            --danger-text: #9b1c1c;
+            --success-bg: #e7f5ec;
+            --success-text: #176448;
         }
 
         * { box-sizing: border-box; }
@@ -45,12 +51,62 @@
             gap: 16px;
         }
 
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(300px, 380px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
         .unit {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 18px;
         }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input, textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 78px;
+            resize: vertical;
+        }
+
+        button {
+            min-height: 38px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 800;
+            padding: 0 12px;
+        }
+
+        button:hover { background: var(--primary-hover); }
+        button.danger { background: var(--danger); }
 
         .details {
             display: grid;
@@ -74,6 +130,28 @@
             padding: 24px;
             text-align: center;
         }
+
+        .alert {
+            margin-bottom: 16px;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .alert-success { background: var(--success-bg); color: var(--success-text); }
+        .alert-danger { background: var(--danger-bg); color: var(--danger-text); }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 14px;
+        }
+
+        @media (max-width: 860px) {
+            .layout { display: block; }
+            .panel { margin-bottom: 18px; }
+        }
     </style>
 </head>
 <body>
@@ -83,40 +161,84 @@
     <h1>Postos de saúde</h1>
     <p class="subtitle">Consulte localização e contatos das unidades disponíveis.</p>
 
-    <div th:if="${#lists.isEmpty(unidades)}" class="empty">
-        Nenhum posto de saúde encontrado.
-    </div>
+    <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
-    <section th:unless="${#lists.isEmpty(unidades)}" class="grid">
-        <article class="unit" th:each="unidade : ${unidades}">
-            <h2 th:text="${unidade.nome}">Posto de saúde</h2>
-            <div class="details">
-                <span th:if="${unidade.endereco != null}">
-                    <span class="label">Localização:</span>
-                    <span th:text="${unidade.endereco}">Endereço</span>
-                </span>
-                <span th:if="${unidade.complemento != null}">
-                    <span class="label">Complemento:</span>
-                    <span th:text="${unidade.complemento}">Complemento</span>
-                </span>
-                <span th:if="${unidade.pontoReferencia != null}">
-                    <span class="label">Referência:</span>
-                    <span th:text="${unidade.pontoReferencia}">Referência</span>
-                </span>
-                <span th:if="${unidade.telefone != null}">
-                    <span class="label">Telefone:</span>
-                    <span th:text="${unidade.telefone}">Telefone</span>
-                </span>
-                <span th:if="${unidade.email != null}">
-                    <span class="label">E-mail:</span>
-                    <span th:text="${unidade.email}">E-mail</span>
-                </span>
-                <span th:if="${unidade.cnes != null}">
-                    <span class="label">CNES:</span>
-                    <span th:text="${unidade.cnes}">CNES</span>
-                </span>
+    <section class="layout">
+        <form class="panel" th:if="${session.usuarioTipo == 'FUNCIONARIO'}" th:action="@{/web/unidades-saude}" method="post">
+            <h2>Nova unidade</h2>
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" required>
+
+            <label for="endereco">Localização</label>
+            <textarea id="endereco" name="endereco" placeholder="Rua, número, bairro, cidade"></textarea>
+
+            <label for="complemento">Complemento</label>
+            <input id="complemento" name="complemento">
+
+            <label for="pontoReferencia">Ponto de referência</label>
+            <input id="pontoReferencia" name="pontoReferencia">
+
+            <label for="horarioFuncionamento">Horário de funcionamento</label>
+            <input id="horarioFuncionamento" name="horarioFuncionamento" placeholder="Segunda a sexta, 07:00 às 17:00">
+
+            <label for="telefone">Telefone</label>
+            <input id="telefone" name="telefone">
+
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email">
+
+            <label for="cnes">CNES</label>
+            <input id="cnes" name="cnes">
+
+            <button type="submit" style="margin-top: 16px;">Cadastrar unidade</button>
+        </form>
+
+        <div>
+            <div th:if="${#lists.isEmpty(unidades)}" class="empty">
+                Nenhum posto de saúde encontrado.
             </div>
-        </article>
+
+            <section th:unless="${#lists.isEmpty(unidades)}" class="grid">
+                <article class="unit" th:each="unidade : ${unidades}">
+                    <h2 th:text="${unidade.nome}">Posto de saúde</h2>
+                    <div class="details">
+                        <span th:if="${unidade.endereco != null}">
+                            <span class="label">Localização:</span>
+                            <span th:text="${unidade.endereco}">Endereço</span>
+                        </span>
+                        <span th:if="${unidade.complemento != null}">
+                            <span class="label">Complemento:</span>
+                            <span th:text="${unidade.complemento}">Complemento</span>
+                        </span>
+                        <span th:if="${unidade.pontoReferencia != null}">
+                            <span class="label">Referência:</span>
+                            <span th:text="${unidade.pontoReferencia}">Referência</span>
+                        </span>
+                        <span th:if="${unidade.horarioFuncionamento != null}">
+                            <span class="label">Horário:</span>
+                            <span th:text="${unidade.horarioFuncionamento}">Horário</span>
+                        </span>
+                        <span th:if="${unidade.telefone != null}">
+                            <span class="label">Telefone:</span>
+                            <span th:text="${unidade.telefone}">Telefone</span>
+                        </span>
+                        <span th:if="${unidade.email != null}">
+                            <span class="label">E-mail:</span>
+                            <span th:text="${unidade.email}">E-mail</span>
+                        </span>
+                        <span th:if="${unidade.cnes != null}">
+                            <span class="label">CNES:</span>
+                            <span th:text="${unidade.cnes}">CNES</span>
+                        </span>
+                    </div>
+                    <form class="actions" th:if="${session.usuarioTipo == 'FUNCIONARIO'}"
+                          th:action="@{/web/unidades-saude/{id}/remover(id=${unidade.id})}" method="post">
+                        <button class="danger" type="submit">Remover</button>
+                    </form>
+                </article>
+            </section>
+        </div>
     </section>
 </main>
 </body>

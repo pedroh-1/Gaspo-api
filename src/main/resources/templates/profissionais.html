@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profissionais</title>
+    <style>
+        :root {
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --text: #1f2933;
+            --muted: #667085;
+            --border: #d6dbe1;
+            --primary: #1f7a5c;
+            --primary-hover: #176448;
+            --danger: #b42318;
+            --danger-bg: #fce8e6;
+            --danger-text: #9b1c1c;
+            --success-bg: #e7f5ec;
+            --success-text: #176448;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        .header { margin-bottom: 24px; }
+        h1 { margin: 0; font-size: 28px; }
+        h2 { margin: 0 0 16px; font-size: 18px; }
+        .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(300px, 380px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input, select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font: inherit;
+            background: #fff;
+        }
+
+        button {
+            min-height: 38px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 800;
+            padding: 0 12px;
+        }
+
+        button:hover { background: var(--primary-hover); }
+        button.danger { background: var(--danger); }
+
+        .alert {
+            margin-bottom: 16px;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .alert-success { background: var(--success-bg); color: var(--success-text); }
+        .alert-danger { background: var(--danger-bg); color: var(--danger-text); }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            min-width: 780px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--border);
+            padding: 12px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .actions form { margin: 0; }
+        .actions select { min-width: 150px; }
+
+        .empty {
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--muted);
+            padding: 24px;
+            text-align: center;
+        }
+
+        @media (max-width: 860px) {
+            .layout { display: block; }
+            .panel { margin-bottom: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/menu :: menu}"></div>
+
+<main class="page">
+    <header class="header">
+        <h1>Profissionais</h1>
+        <p class="subtitle">Cadastre profissionais, vincule unidades de saúde e acompanhe o status de atendimento.</p>
+    </header>
+
+    <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <section class="layout">
+        <form class="panel" th:if="${session.usuarioTipo == 'FUNCIONARIO'}" th:action="@{/web/profissionais}" method="post">
+            <h2>Novo profissional</h2>
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" required>
+
+            <label for="especialidade">Especialidade</label>
+            <input id="especialidade" name="especialidade" placeholder="Clínico geral, Pediatria...">
+
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email">
+
+            <label for="telefone">Telefone</label>
+            <input id="telefone" name="telefone">
+
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option th:each="status : ${statusProfissional}"
+                        th:value="${status}"
+                        th:text="${status}">
+                </option>
+            </select>
+
+            <label for="unidadeSaudeId">Unidade de saúde</label>
+            <select id="unidadeSaudeId" name="unidadeSaudeId">
+                <option value="">Sem unidade vinculada</option>
+                <option th:each="unidade : ${unidades}"
+                        th:value="${unidade.id}"
+                        th:text="${unidade.nome + (unidade.endereco != null ? ' - ' + unidade.endereco : '')}">
+                </option>
+            </select>
+
+            <button type="submit" style="margin-top: 16px;">Cadastrar</button>
+        </form>
+
+        <section class="panel">
+            <h2>Profissionais cadastrados</h2>
+            <div th:if="${#lists.isEmpty(profissionais)}" class="empty">
+                Nenhum profissional cadastrado.
+            </div>
+
+            <div class="table-wrap" th:unless="${#lists.isEmpty(profissionais)}">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Especialidade</th>
+                        <th>Unidade</th>
+                        <th>Status</th>
+                        <th th:if="${session.usuarioTipo == 'FUNCIONARIO'}">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="profissional : ${profissionais}">
+                        <td>
+                            <strong th:text="${profissional.nome}">Nome</strong><br>
+                            <span th:text="${profissional.email ?: 'E-mail não informado'}">E-mail</span><br>
+                            <span th:text="${profissional.telefone ?: 'Telefone não informado'}">Telefone</span>
+                        </td>
+                        <td th:text="${profissional.especialidade ?: 'Geral'}">Especialidade</td>
+                        <td>
+                            <span th:text="${profissional.unidadeSaude != null ? profissional.unidadeSaude.nome : 'Não vinculada'}">Unidade</span><br>
+                            <span th:if="${profissional.unidadeSaude != null && profissional.unidadeSaude.endereco != null}"
+                                  th:text="${profissional.unidadeSaude.endereco}">Localização</span>
+                        </td>
+                        <td th:text="${profissional.status}">ATENDENDO</td>
+                        <td th:if="${session.usuarioTipo == 'FUNCIONARIO'}">
+                            <div class="actions">
+                                <form th:action="@{/web/profissionais/{id}/status(id=${profissional.id})}" method="post">
+                                    <select name="status">
+                                        <option th:each="status : ${statusProfissional}"
+                                                th:value="${status}"
+                                                th:selected="${status == profissional.status}"
+                                                th:text="${status}">
+                                        </option>
+                                    </select>
+                                    <button type="submit">Salvar</button>
+                                </form>
+                                <form th:action="@{/web/profissionais/{id}/remover(id=${profissional.id})}" method="post">
+                                    <button class="danger" type="submit">Remover</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </section>
+</main>
+</body>
+</html>

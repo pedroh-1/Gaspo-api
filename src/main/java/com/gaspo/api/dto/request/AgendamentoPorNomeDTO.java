@@ -5,6 +5,5 @@ import java.util.Date;
 public record AgendamentoPorNomeDTO(
     Date data,
     String nomeProfissional,
-    String nomeUnidade,
-    Long prontuarioId
+    String nomeUnidade
 ) {}

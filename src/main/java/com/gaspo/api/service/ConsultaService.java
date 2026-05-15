@@ -1,27 +1,22 @@
 package com.gaspo.api.service;
 
-import com.gaspo.api.aggregate.ConsultaAggregate;
 import com.gaspo.api.dto.request.AgendamentoPorNomeDTO;
 import com.gaspo.api.dto.request.ConsultaAgendamentoRequestDTO;
 import com.gaspo.api.dto.request.ConsultaRequestDTO;
 import com.gaspo.api.dto.response.AgendaDisponibilidadeResponseDTO;
 import com.gaspo.api.dto.response.ConsultaResponseDTO;
 import com.gaspo.api.dto.response.ConsultaResumoPageDTO;
-import com.gaspo.api.dto.response.LotacaoResumoDTO;
-import com.gaspo.api.dto.response.ProntuarioOpcaoDTO;
 import com.gaspo.api.mapper.ConsultaMapper;
 import com.gaspo.api.model.enums.Disponibilidade;
-import com.gaspo.api.model.esus.ConsultaModel;
-import com.gaspo.api.model.esus.LotacaoModel;
-import com.gaspo.api.model.esus.ProntuarioModel;
+import com.gaspo.api.model.enums.StatusConsulta;
 import com.gaspo.api.model.gaspo.AgendaModel;
+import com.gaspo.api.model.gaspo.ConsultaModel;
+import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.model.gaspo.UsuarioModel;
-import com.gaspo.api.repository.esus.ConsultaRepository;
-import com.gaspo.api.repository.esus.LotacaoRepository;
-import com.gaspo.api.repository.esus.ProntuarioRepository;
 import com.gaspo.api.repository.gaspo.AgendaRepository;
+import com.gaspo.api.repository.gaspo.ConsultaRepository;
+import com.gaspo.api.repository.gaspo.ProfissionalRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,123 +26,93 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ConsultaService {
 
-    private static final Long STATUS_AGENDADO = 0L;
-    private static final Long STATUS_CANCELADO = 4L;
     private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
-    @Autowired
-    private ConsultaRepository consultaRepository;
+    private final ConsultaRepository consultaRepository;
+    private final AgendaRepository agendaRepository;
+    private final ProfissionalRepository profissionalRepository;
+    private final ConsultaMapper consultaMapper;
 
-    @Autowired
-    private LotacaoRepository lotacaoRepository;
-
-    @Autowired
-    private AgendaRepository agendaRepository;
-
-    @Autowired
-    private ProntuarioRepository prontuarioRepository;
-
-    @Autowired
-    private AgendaService agendaService;
-
-    @Autowired
-    private ConsultaMapper consultaMapper;
-
-    @Transactional
-    public ConsultaResponseDTO prepararAgendamento(AgendamentoPorNomeDTO dto) {
-        List<LotacaoModel> lotacoes = lotacaoRepository.findByProfissionalNomeAndUnidadeSaudeNome(dto.nomeProfissional(), dto.nomeUnidade());
-
-        if (lotacoes.isEmpty()) {
-            throw new RuntimeException("Não foi possível localizar o vínculo deste profissional nesta unidade");
-        }
-
-        LotacaoModel lotacaoEncontrada = lotacoes.get(0);
-
-        ConsultaRequestDTO request = new ConsultaRequestDTO(dto.data(), lotacaoEncontrada.getId(), dto.prontuarioId());
-        return realizarAgendamento(request);
+    public ConsultaService(ConsultaRepository consultaRepository,
+                           AgendaRepository agendaRepository,
+                           ProfissionalRepository profissionalRepository,
+                           ConsultaMapper consultaMapper) {
+        this.consultaRepository = consultaRepository;
+        this.agendaRepository = agendaRepository;
+        this.profissionalRepository = profissionalRepository;
+        this.consultaMapper = consultaMapper;
     }
 
     @Transactional
     public ConsultaResponseDTO prepararAgendamentoParaUsuarioLogado(AgendamentoPorNomeDTO dto, UsuarioModel usuarioLogado) {
         validarUsuarioLogado(usuarioLogado);
 
-        List<LotacaoModel> lotacoes = lotacaoRepository.findByProfissionalNomeAndUnidadeSaudeNome(dto.nomeProfissional(), dto.nomeUnidade());
-        if (lotacoes.isEmpty()) {
-            throw new RuntimeException("Não foi possível localizar o vínculo deste profissional nesta unidade");
-        }
+        ProfissionalModel profissional = profissionalRepository.findByNomeContainingIgnoreCase(dto.nomeProfissional()).stream()
+                .filter(item -> dto.nomeUnidade() == null
+                        || item.getUnidadeSaude() == null
+                        || dto.nomeUnidade().equalsIgnoreCase(item.getUnidadeSaude().getNome()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profissional não encontrado"));
 
-        ProntuarioModel prontuario = prontuarioRepository.findFirstByPacienteId(usuarioLogado.getIdCidadaoEsus())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prontuário do usuário logado não encontrado"));
-
-        ConsultaRequestDTO request = new ConsultaRequestDTO(dto.data(), lotacoes.get(0).getId(), prontuario.getId());
-        return realizarAgendamento(request, usuarioLogado);
+        return realizarAgendamento(new ConsultaRequestDTO(dto.data(), profissional.getId()), usuarioLogado);
     }
 
     @Transactional
     public ConsultaResponseDTO agendarParaUsuarioLogado(ConsultaAgendamentoRequestDTO dto, UsuarioModel usuarioLogado) {
         validarUsuarioLogado(usuarioLogado);
-        ProntuarioModel prontuario = prontuarioRepository.findFirstByPacienteId(usuarioLogado.getIdCidadaoEsus())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prontuário do usuário logado não encontrado"));
-
-        ConsultaRequestDTO request = new ConsultaRequestDTO(dto.data(), dto.lotacaoId(), prontuario.getId());
-        return realizarAgendamento(request, usuarioLogado);
-    }
-
-    @Transactional
-    public ConsultaResponseDTO realizarAgendamento(ConsultaRequestDTO dto) {
-        return realizarAgendamento(dto, null);
+        return realizarAgendamento(new ConsultaRequestDTO(dto.data(), dto.profissionalId()), usuarioLogado);
     }
 
     @Transactional
     public ConsultaResponseDTO realizarAgendamento(ConsultaRequestDTO dto, UsuarioModel usuarioLogado) {
-        ConsultaAggregate aggregate = prepararAggregate(dto, usuarioLogado);
+        validarUsuarioLogado(usuarioLogado);
+        LocalDateTime dataHora = validarDadosDeAgendamento(dto);
 
-        ConsultaModel consulta = aggregate.getConsulta();
-        consulta.setStatus(STATUS_AGENDADO); // 0 = AGENDADO no e-SUS
-        aggregate.getAgenda().setDisponibilidade(Disponibilidade.OCUPADO);
+        ProfissionalModel profissional = profissionalRepository.findById(dto.profissionalId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profissional não encontrado"));
 
+        AgendaModel agenda = agendaRepository.findFirstByProfissionalIdAndDataAndHorario(
+                        profissional.getId(),
+                        dataHora.toLocalDate(),
+                        dataHora.toLocalTime()
+                )
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Horário não cadastrado na agenda do profissional"));
+
+        if (!Disponibilidade.DISPONIVEL.equals(agenda.getDisponibilidade())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Horário indisponível para agendamento");
+        }
+
+        ConsultaModel consulta = new ConsultaModel();
+        consulta.setData(dto.data());
+        consulta.setStatus(StatusConsulta.AGENDADA);
+        consulta.setPaciente(usuarioLogado);
+        consulta.setProfissional(profissional);
+        consulta.setUnidadeSaude(profissional.getUnidadeSaude());
+
+        agenda.setDisponibilidade(Disponibilidade.OCUPADO);
         ConsultaModel saved = consultaRepository.save(consulta);
-        agendaRepository.save(aggregate.getAgenda());
+        agendaRepository.save(agenda);
+
         return consultaMapper.toResponseDTO(saved);
     }
 
-    public List<ConsultaResponseDTO> listarTodas() {
-        return consultaRepository.findByStatus(STATUS_AGENDADO).stream()
-                .map(consultaMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
     public ConsultaResumoPageDTO listarTodas(Pageable pageable) {
-        return toPageDTO(consultaRepository.findByStatus(STATUS_AGENDADO, pageable));
-    }
-
-    public List<ConsultaResponseDTO> listarAgendamentosAtivos() {
-        return consultaRepository.findAgendamentosAtivos(STATUS_AGENDADO, new Date()).stream()
-                .map(consultaMapper::toResponseDTO)
-                .collect(Collectors.toList());
+        return toPageDTO(consultaRepository.findByStatus(StatusConsulta.AGENDADA, pageable));
     }
 
     public ConsultaResumoPageDTO listarAgendamentosAtivos(Pageable pageable) {
-        return toPageDTO(consultaRepository.findAgendamentosAtivos(STATUS_AGENDADO, new Date(), pageable));
-    }
-
-    public List<ConsultaResponseDTO> listarHistorico() {
-        return consultaRepository.findHistorico(STATUS_AGENDADO, new Date(), PageRequest.of(0, 50)).stream()
-                .map(consultaMapper::toResponseDTO)
-                .collect(Collectors.toList());
+        return toPageDTO(consultaRepository.findAgendamentosAtivos(StatusConsulta.AGENDADA, new Date(), pageable));
     }
 
     public ConsultaResumoPageDTO listarHistorico(Pageable pageable) {
-        return toPageDTO(consultaRepository.findHistoricoPage(STATUS_AGENDADO, new Date(), pageable));
+        return toPageDTO(consultaRepository.findHistoricoPage(StatusConsulta.AGENDADA, new Date(), pageable));
     }
 
     public List<ConsultaResponseDTO> listarHistoricoDoUsuario(UsuarioModel usuarioLogado) {
@@ -155,13 +120,10 @@ public class ConsultaService {
     }
 
     public ConsultaResumoPageDTO listarHistoricoDoUsuario(UsuarioModel usuarioLogado, Pageable pageable) {
-        if (usuarioLogado == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
-        }
-
+        validarUsuarioLogado(usuarioLogado);
         return toPageDTO(consultaRepository.findHistoricoDoPaciente(
-                usuarioLogado.getIdCidadaoEsus(),
-                STATUS_AGENDADO,
+                usuarioLogado.getId(),
+                StatusConsulta.AGENDADA,
                 new Date(),
                 pageable
         ));
@@ -170,23 +132,11 @@ public class ConsultaService {
     public ConsultaResumoPageDTO listarAgendamentosAtivosDoUsuario(UsuarioModel usuarioLogado, Pageable pageable) {
         validarUsuarioLogado(usuarioLogado);
         return toPageDTO(consultaRepository.findAgendamentosAtivosDoPaciente(
-                usuarioLogado.getIdCidadaoEsus(),
-                STATUS_AGENDADO,
+                usuarioLogado.getId(),
+                StatusConsulta.AGENDADA,
                 new Date(),
                 pageable
         ));
-    }
-
-    public List<LotacaoResumoDTO> listarLotacoesResumo() {
-        return lotacaoRepository.findAll().stream()
-                .map(consultaMapper::toLotacaoResumoDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProntuarioOpcaoDTO> listarProntuariosResumo() {
-        return prontuarioRepository.findAll().stream()
-                .map(consultaMapper::toProntuarioOpcaoDTO)
-                .collect(Collectors.toList());
     }
 
     public List<AgendaDisponibilidadeResponseDTO> listarHorariosDisponiveis(Long profissionalId, LocalDate data) {
@@ -200,24 +150,21 @@ public class ConsultaService {
                         Disponibilidade.DISPONIVEL
                 ).stream()
                 .map(consultaMapper::toAgendaDisponibilidadeDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void cancelarConsulta(Long id) {
-        cancelarConsulta(id, null);
+                .toList();
     }
 
     @Transactional
     public void cancelarConsulta(Long id, UsuarioModel usuarioLogado) {
-        ConsultaModel consulta = consultaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consulta não encontrada com o ID: " + id));
+        validarUsuarioLogado(usuarioLogado);
 
-        if (usuarioLogado != null && !consultaPertenceAoUsuario(consulta, usuarioLogado)) {
+        ConsultaModel consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Consulta não encontrada"));
+
+        if (consulta.getPaciente() == null || !usuarioLogado.getId().equals(consulta.getPaciente().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Esta consulta não pertence ao usuário logado");
         }
 
-        if (!STATUS_AGENDADO.equals(consulta.getStatus())) {
+        if (!StatusConsulta.AGENDADA.equals(consulta.getStatus())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Somente consultas agendadas podem ser canceladas");
         }
 
@@ -230,46 +177,8 @@ public class ConsultaService {
             agendaRepository.save(agenda);
         });
 
-        consulta.setStatus(STATUS_CANCELADO);
-
+        consulta.setStatus(StatusConsulta.CANCELADA);
         consultaRepository.save(consulta);
-    }
-
-    private ConsultaAggregate prepararAggregate(ConsultaRequestDTO dto, UsuarioModel usuarioLogado) {
-        LocalDateTime dataHora = validarDadosDeAgendamento(dto);
-
-        LotacaoModel lotacao = lotacaoRepository.findById(dto.lotacaoId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lotação/profissional não encontrado"));
-
-        ProntuarioModel prontuario = prontuarioRepository.findById(dto.prontuarioId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prontuário não encontrado"));
-
-        if (usuarioLogado != null && !prontuarioPertenceAoUsuario(prontuario, usuarioLogado)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Prontuário não pertence ao usuário logado");
-        }
-
-        Long profissionalId = lotacao.getProfissional() != null ? lotacao.getProfissional().getId() : null;
-        if (profissionalId == null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Lotação sem profissional vinculado");
-        }
-
-        AgendaModel agenda = agendaRepository.findFirstByProfissionalIdAndDataAndHorario(
-                        profissionalId,
-                        dataHora.toLocalDate(),
-                        dataHora.toLocalTime()
-                )
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Horário não cadastrado na agenda do profissional"));
-
-        if (!Disponibilidade.DISPONIVEL.equals(agenda.getDisponibilidade())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Horário indisponível para agendamento");
-        }
-
-        ConsultaModel consulta = new ConsultaModel();
-        consulta.setData(dto.data());
-        consulta.setLotacao(lotacao);
-        consulta.setProntuario(prontuario);
-
-        return new ConsultaAggregate(consulta, agenda, lotacao, prontuario, usuarioLogado);
     }
 
     private LocalDateTime validarDadosDeAgendamento(ConsultaRequestDTO dto) {
@@ -280,36 +189,23 @@ public class ConsultaService {
         if (!dataHora.isAfter(LocalDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A consulta deve ser agendada para uma data futura");
         }
-        if (dto.lotacaoId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lotação é obrigatória");
-        }
-        if (dto.prontuarioId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Prontuário é obrigatório");
+        if (dto.profissionalId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profissional é obrigatório");
         }
         return dataHora;
     }
 
     private java.util.Optional<AgendaModel> agendaDaConsulta(ConsultaModel consulta) {
-        if (consulta.getLotacao() == null || consulta.getLotacao().getProfissional() == null || consulta.getData() == null) {
+        if (consulta.getProfissional() == null || consulta.getData() == null) {
             return java.util.Optional.empty();
         }
 
         LocalDateTime dataHora = toLocalDateTime(consulta.getData());
         return agendaRepository.findFirstByProfissionalIdAndDataAndHorario(
-                consulta.getLotacao().getProfissional().getId(),
+                consulta.getProfissional().getId(),
                 dataHora.toLocalDate(),
                 dataHora.toLocalTime()
         );
-    }
-
-    private boolean prontuarioPertenceAoUsuario(ProntuarioModel prontuario, UsuarioModel usuarioLogado) {
-        return prontuario.getPaciente() != null
-                && usuarioLogado.getIdCidadaoEsus() != null
-                && usuarioLogado.getIdCidadaoEsus().equals(prontuario.getPaciente().getId());
-    }
-
-    private boolean consultaPertenceAoUsuario(ConsultaModel consulta, UsuarioModel usuarioLogado) {
-        return consulta.getProntuario() != null && prontuarioPertenceAoUsuario(consulta.getProntuario(), usuarioLogado);
     }
 
     private LocalDateTime toLocalDateTime(Date data) {
@@ -317,6 +213,12 @@ public class ConsultaService {
             return null;
         }
         return LocalDateTime.ofInstant(data.toInstant(), ZONE_ID).withSecond(0).withNano(0);
+    }
+
+    private void validarUsuarioLogado(UsuarioModel usuarioLogado) {
+        if (usuarioLogado == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
+        }
     }
 
     private ConsultaResumoPageDTO toPageDTO(Page<ConsultaModel> page) {
@@ -329,11 +231,5 @@ public class ConsultaService {
                 page.isFirst(),
                 page.isLast()
         );
-    }
-
-    private void validarUsuarioLogado(UsuarioModel usuarioLogado) {
-        if (usuarioLogado == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
-        }
     }
 }

@@ -1,7 +1,6 @@
 package com.gaspo.api.controller;
 
 import com.gaspo.api.dto.request.UsuarioCadastroDTO;
-import com.gaspo.api.model.esus.PacienteModel;
 import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class PacienteController {
     private PacienteService service; // Agora usamos o Service
 
     @GetMapping
-    public List<PacienteModel> listarTodos() {
+    public List<UsuarioModel> listarTodos() {
         return service.listarTodos();
     }
 

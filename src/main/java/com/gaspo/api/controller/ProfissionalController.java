@@ -1,8 +1,11 @@
 package com.gaspo.api.controller;
 
+import com.gaspo.api.dto.request.ProfissionalRequestDTO;
 import com.gaspo.api.dto.request.StatusProfissionalRequestDTO;
+import com.gaspo.api.dto.response.ProfissionalResponseDTO;
 import com.gaspo.api.dto.response.StatusProfissionalResponseDTO;
-import com.gaspo.api.model.esus.ProfissionalModel;
+import com.gaspo.api.model.enums.StatusProfissional;
+import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.service.ProfissionalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,22 @@ public class ProfissionalController {
     //Rota para buscar médicos
     @GetMapping
     public ResponseEntity<List<ProfissionalModel>> listarTodos() {
+        return ResponseEntity.ok(service.listarTodos());
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ProfissionalModel>> filtrar(@RequestParam(required = false) String nome,
+                                                           @RequestParam(required = false) String especialidade,
+                                                           @RequestParam(required = false) StatusProfissional status) {
+        if (nome != null && !nome.isBlank()) {
+            return ResponseEntity.ok(service.buscarPorNome(nome));
+        }
+        if (especialidade != null && !especialidade.isBlank()) {
+            return ResponseEntity.ok(service.buscarPorEspecialidade(especialidade));
+        }
+        if (status != null) {
+            return ResponseEntity.ok(service.buscarPorStatus(status));
+        }
         return ResponseEntity.ok(service.listarTodos());
     }
 
@@ -45,7 +64,20 @@ public class ProfissionalController {
         return ResponseEntity.ok(new StatusProfissionalResponseDTO(atualizado.getId(), atualizado.getNome(), atualizado.getStatus()));
     }
 
-    //rota para criar novo profissional (não aplicável, e-SUS read-only)
+    @PostMapping
+    public ResponseEntity<ProfissionalResponseDTO> criar(@Valid @RequestBody ProfissionalRequestDTO profissional) {
+        return ResponseEntity.ok(service.cadastrar(profissional));
+    }
 
-    //rota para remover profissional (não aplicável, e-SUS read-only)
+    @PutMapping("/{id}")
+    public ResponseEntity<ProfissionalResponseDTO> atualizar(@PathVariable Long id,
+                                                             @Valid @RequestBody ProfissionalRequestDTO profissional) {
+        return ResponseEntity.ok(service.atualizar(id, profissional));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> remover(@PathVariable Long id) {
+        service.remover(id);
+        return ResponseEntity.noContent().build();
+    }
 }

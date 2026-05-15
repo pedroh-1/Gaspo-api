@@ -1,7 +1,7 @@
 package com.gaspo.api.mapper;
 
 import com.gaspo.api.dto.response.UnidadeSaudeResumoDTO;
-import com.gaspo.api.model.esus.UnidadeSaudeModel;
+import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,12 +16,12 @@ public class UnidadeSaudeMapper {
                 model.getId(),
                 model.getNome(),
                 model.getCnes(),
-                model.getTelefoneComercial(),
+                model.getTelefone(),
                 model.getEmail(),
-                model.getEnderecoFormatado(),
+                model.getEndereco(),
                 model.getComplemento(),
                 model.getPontoReferencia(),
-                null
+                model.getHorarioFuncionamento()
         );
     }
 }

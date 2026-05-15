@@ -1,7 +1,7 @@
 package com.gaspo.api.controller;
 
 import com.gaspo.api.model.enums.Disponibilidade;
-import com.gaspo.api.model.esus.ProfissionalModel;
+import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.service.AgendaService;
 import com.gaspo.api.service.ProfissionalService;

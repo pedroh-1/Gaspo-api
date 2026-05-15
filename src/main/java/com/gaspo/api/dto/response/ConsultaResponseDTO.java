@@ -5,9 +5,14 @@ import java.util.Date;
 public record ConsultaResponseDTO(
     Long id,
     Date data,
-    Long status,
-    String statusSincronizacao,
-    Integer foraUbs,
-    LotacaoResumoDTO lotacao,
-    ProntuarioResumoDTO prontuario
+    String status,
+    Long profissionalId,
+    String nomeProfissional,
+    String especialidadeProfissional,
+    Long unidadeId,
+    String nomeUnidade,
+    String enderecoUnidade,
+    Long pacienteId,
+    String nomePaciente,
+    String cpfPaciente
 ) {}

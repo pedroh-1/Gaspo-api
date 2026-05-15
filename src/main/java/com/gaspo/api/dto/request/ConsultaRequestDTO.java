@@ -11,8 +11,5 @@ public record ConsultaRequestDTO(
     Date data,
 
     @NotNull
-    Long lotacaoId,
-
-    @NotNull
-    Long prontuarioId
+    Long profissionalId
 ) {}
