@@ -1,9 +1,11 @@
 package com.gaspo.api.controller;
 
+import com.gaspo.api.dto.request.AgendaRequestDTO;
+import com.gaspo.api.dto.response.AgendaDisponibilidadeResponseDTO;
 import com.gaspo.api.model.gaspo.ProfissionalModel;
-import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.service.AgendaService;
 import com.gaspo.api.service.ProfissionalService;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,13 +49,13 @@ public class AgendaController {
     // --- MÉTODOS CRUD BÁSICOS ---
 
     @GetMapping
-    public ResponseEntity<List<AgendaModel>> listarTodos() {
-        return ResponseEntity.ok(agendaService.listarTodos());
+    public ResponseEntity<List<AgendaDisponibilidadeResponseDTO>> listarTodos() {
+        return ResponseEntity.ok(agendaService.listarTodosDTO());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AgendaModel> buscarPorId(@PathVariable Long id) {
-        return agendaService.buscarPorId(id)
+    public ResponseEntity<AgendaDisponibilidadeResponseDTO> buscarPorId(@PathVariable Long id) {
+        return agendaService.buscarPorIdDTO(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -65,7 +67,8 @@ public class AgendaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AgendaModel> atualizar(@PathVariable Long id, @RequestBody AgendaModel agenda) {
+    public ResponseEntity<AgendaDisponibilidadeResponseDTO> atualizar(@PathVariable Long id,
+                                                                      @Valid @RequestBody AgendaRequestDTO agenda) {
         return ResponseEntity.ok(agendaService.atualizar(id, agenda));
     }
 }

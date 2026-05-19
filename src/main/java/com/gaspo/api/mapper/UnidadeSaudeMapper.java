@@ -1,27 +1,20 @@
 package com.gaspo.api.mapper;
 
+import com.gaspo.api.dto.request.UnidadeSaudeRequestDTO;
 import com.gaspo.api.dto.response.UnidadeSaudeResumoDTO;
 import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
-@Component
-public class UnidadeSaudeMapper {
+@Mapper(componentModel = "spring")
+public interface UnidadeSaudeMapper {
 
-    public UnidadeSaudeResumoDTO toResumoDTO(UnidadeSaudeModel model) {
-        if (model == null) {
-            return null;
-        }
+    UnidadeSaudeResumoDTO toResumoDTO(UnidadeSaudeModel model);
 
-        return new UnidadeSaudeResumoDTO(
-                model.getId(),
-                model.getNome(),
-                model.getCnes(),
-                model.getTelefone(),
-                model.getEmail(),
-                model.getEndereco(),
-                model.getComplemento(),
-                model.getPontoReferencia(),
-                model.getHorarioFuncionamento()
-        );
-    }
+    @Mapping(target = "id", ignore = true)
+    UnidadeSaudeModel toModel(UnidadeSaudeRequestDTO dto);
+
+    @Mapping(target = "id", ignore = true)
+    void updateModel(UnidadeSaudeRequestDTO dto, @MappingTarget UnidadeSaudeModel model);
 }

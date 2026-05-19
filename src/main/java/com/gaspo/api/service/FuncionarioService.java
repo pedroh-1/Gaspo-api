@@ -2,6 +2,7 @@ package com.gaspo.api.service;
 
 import com.gaspo.api.dto.request.FuncionarioCadastroDTO;
 import com.gaspo.api.dto.response.FuncionarioResponseDTO;
+import com.gaspo.api.mapper.FuncionarioMapper;
 import com.gaspo.api.model.gaspo.FuncionarioModel;
 import com.gaspo.api.repository.gaspo.FuncionarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,16 +16,18 @@ public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FuncionarioMapper funcionarioMapper;
 
-    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder) {
+    public FuncionarioService(FuncionarioRepository funcionarioRepository,
+                              PasswordEncoder passwordEncoder,
+                              FuncionarioMapper funcionarioMapper) {
         this.funcionarioRepository = funcionarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.funcionarioMapper = funcionarioMapper;
     }
 
     public List<FuncionarioResponseDTO> listarTodos() {
-        return funcionarioRepository.findAll().stream()
-                .map(this::toResponse)
-                .toList();
+        return funcionarioMapper.toResponseDTOList(funcionarioRepository.findAll());
     }
 
     @Transactional(transactionManager = "gaspoTransactionManager")
@@ -33,23 +36,9 @@ public class FuncionarioService {
             throw new RuntimeException("E-mail já está em uso por outro funcionário.");
         }
 
-        FuncionarioModel funcionario = new FuncionarioModel();
-        funcionario.setNome(dto.nome());
-        funcionario.setEmail(dto.email());
-        funcionario.setTelefone(dto.telefone());
-        funcionario.setCargo(dto.cargo());
+        FuncionarioModel funcionario = funcionarioMapper.toModel(dto);
         funcionario.setSenha(passwordEncoder.encode(dto.senha()));
 
-        return toResponse(funcionarioRepository.save(funcionario));
-    }
-
-    private FuncionarioResponseDTO toResponse(FuncionarioModel funcionario) {
-        return new FuncionarioResponseDTO(
-                funcionario.getId(),
-                funcionario.getNome(),
-                funcionario.getEmail(),
-                funcionario.getTelefone(),
-                funcionario.getCargo()
-        );
+        return funcionarioMapper.toResponseDTO(funcionarioRepository.save(funcionario));
     }
 }

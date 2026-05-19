@@ -1,6 +1,8 @@
 package com.gaspo.api.controller;
 
 import com.gaspo.api.dto.request.UsuarioCadastroDTO;
+import com.gaspo.api.dto.response.UsuarioResponseDTO;
+import com.gaspo.api.mapper.UsuarioMapper;
 import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +23,22 @@ public class PacienteController {
     @Autowired
     private PacienteService service; // Agora usamos o Service
 
+    @Autowired
+    private UsuarioMapper usuarioMapper;
+
     @GetMapping
-    public List<UsuarioModel> listarTodos() {
-        return service.listarTodos();
+    public List<UsuarioResponseDTO> listarTodos() {
+        return usuarioMapper.toResponseDTOList(service.listarTodos());
     }
 
     @GetMapping("/cadastrados")
-    public List<UsuarioModel> listarUsuariosGaspo() {
-        return service.listarUsuariosGaspo();
+    public List<UsuarioResponseDTO> listarUsuariosGaspo() {
+        return usuarioMapper.toResponseDTOList(service.listarUsuariosGaspo());
     }
 
     @PostMapping("/cadastro")
-    public ResponseEntity<UsuarioModel> cadastrar(@RequestBody UsuarioCadastroDTO dto) {
+    public ResponseEntity<UsuarioResponseDTO> cadastrar(@RequestBody UsuarioCadastroDTO dto) {
         UsuarioModel novoUsuario = service.cadastrarUsuario(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioMapper.toResponseDTO(novoUsuario));
     }
 }

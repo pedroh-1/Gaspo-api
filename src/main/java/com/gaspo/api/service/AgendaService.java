@@ -1,10 +1,12 @@
 package com.gaspo.api.service;
 
-
-
+import com.gaspo.api.dto.request.AgendaRequestDTO;
+import com.gaspo.api.dto.response.AgendaDisponibilidadeResponseDTO;
+import com.gaspo.api.mapper.AgendaMapper;
 import com.gaspo.api.model.enums.Disponibilidade;
 import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.model.gaspo.ProfissionalModel;
+import com.gaspo.api.repository.gaspo.ProfissionalRepository;
 import com.gaspo.api.repository.gaspo.AgendaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
@@ -19,10 +21,16 @@ import java.util.Optional;
 public class AgendaService {
 
     private final AgendaRepository agendaRepository;
+    private final ProfissionalRepository profissionalRepository;
+    private final AgendaMapper agendaMapper;
 
 
-      public AgendaService(AgendaRepository agendaRepository) {
+      public AgendaService(AgendaRepository agendaRepository,
+                           ProfissionalRepository profissionalRepository,
+                           AgendaMapper agendaMapper) {
         this.agendaRepository = agendaRepository;
+        this.profissionalRepository = profissionalRepository;
+        this.agendaMapper = agendaMapper;
     }
 
 
@@ -56,8 +64,16 @@ public class AgendaService {
         return agendaRepository.findAll(Sort.by(Sort.Direction.ASC, "data", "horario"));
     }
 
+    public List<AgendaDisponibilidadeResponseDTO> listarTodosDTO() {
+        return agendaMapper.toResponseDTOList(listarTodos());
+    }
+
     public Optional<AgendaModel> buscarPorId(Long id) {
         return agendaRepository.findById(id);
+    }
+
+    public Optional<AgendaDisponibilidadeResponseDTO> buscarPorIdDTO(Long id) {
+        return agendaRepository.findById(id).map(agendaMapper::toResponseDTO);
     }
 
     public void deletarPorId(Long id) {
@@ -79,5 +95,20 @@ public class AgendaService {
         existe.setProfissionalNome(agendaAtualizada.getProfissionalNome());
 
         return agendaRepository.save(existe);
+    }
+
+    @Transactional
+    public AgendaDisponibilidadeResponseDTO atualizar(Long id, AgendaRequestDTO dto) {
+        AgendaModel agenda = agendaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agenda não encontrada"));
+        agendaMapper.updateModel(dto, agenda);
+        preencherNomeProfissional(agenda);
+        return agendaMapper.toResponseDTO(agendaRepository.save(agenda));
+    }
+
+    private void preencherNomeProfissional(AgendaModel agenda) {
+        ProfissionalModel profissional = profissionalRepository.findById(agenda.getProfissionalId())
+                .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
+        agenda.setProfissionalNome(profissional.getNome() != null ? profissional.getNome() : "Profissional " + profissional.getId());
     }
 }

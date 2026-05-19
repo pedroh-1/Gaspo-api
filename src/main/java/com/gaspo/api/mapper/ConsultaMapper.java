@@ -4,51 +4,24 @@ import com.gaspo.api.dto.response.AgendaDisponibilidadeResponseDTO;
 import com.gaspo.api.dto.response.ConsultaResponseDTO;
 import com.gaspo.api.model.gaspo.AgendaModel;
 import com.gaspo.api.model.gaspo.ConsultaModel;
-import com.gaspo.api.model.gaspo.ProfissionalModel;
-import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
-import com.gaspo.api.model.gaspo.UsuarioModel;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class ConsultaMapper {
+@Mapper(componentModel = "spring")
+public interface ConsultaMapper {
 
-    public ConsultaResponseDTO toResponseDTO(ConsultaModel model) {
-        if (model == null) {
-            return null;
-        }
+    @Mapping(target = "status", expression = "java(model.getStatus() != null ? model.getStatus().name() : null)")
+    @Mapping(target = "profissionalId", source = "profissional.id")
+    @Mapping(target = "nomeProfissional", source = "profissional.nome")
+    @Mapping(target = "especialidadeProfissional", source = "profissional.especialidade")
+    @Mapping(target = "unidadeId", source = "unidadeSaude.id")
+    @Mapping(target = "nomeUnidade", source = "unidadeSaude.nome")
+    @Mapping(target = "enderecoUnidade", source = "unidadeSaude.endereco")
+    @Mapping(target = "pacienteId", source = "paciente.id")
+    @Mapping(target = "nomePaciente", source = "paciente.nome")
+    @Mapping(target = "cpfPaciente", source = "paciente.cpf")
+    ConsultaResponseDTO toResponseDTO(ConsultaModel model);
 
-        ProfissionalModel profissional = model.getProfissional();
-        UsuarioModel paciente = model.getPaciente();
-        UnidadeSaudeModel unidade = model.getUnidadeSaude();
-
-        return new ConsultaResponseDTO(
-                model.getId(),
-                model.getData(),
-                model.getStatus() != null ? model.getStatus().name() : null,
-                profissional != null ? profissional.getId() : null,
-                profissional != null ? profissional.getNome() : null,
-                profissional != null ? profissional.getEspecialidade() : null,
-                unidade != null ? unidade.getId() : null,
-                unidade != null ? unidade.getNome() : null,
-                unidade != null ? unidade.getEndereco() : null,
-                paciente != null ? paciente.getId() : null,
-                paciente != null ? paciente.getNome() : null,
-                paciente != null ? paciente.getCpf() : null
-        );
-    }
-
-    public AgendaDisponibilidadeResponseDTO toAgendaDisponibilidadeDTO(AgendaModel model) {
-        if (model == null) {
-            return null;
-        }
-
-        return new AgendaDisponibilidadeResponseDTO(
-                model.getId(),
-                model.getData(),
-                model.getHorario(),
-                model.getDisponibilidade(),
-                model.getProfissionalId(),
-                model.getProfissionalNome()
-        );
-    }
+    @Mapping(target = "nomeProfissional", source = "profissionalNome")
+    AgendaDisponibilidadeResponseDTO toAgendaDisponibilidadeDTO(AgendaModel model);
 }

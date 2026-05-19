@@ -37,8 +37,7 @@ public class UnidadeSaudeService {
 
     @Transactional
     public UnidadeSaudeResumoDTO salvar(UnidadeSaudeRequestDTO dto) {
-        UnidadeSaudeModel unidade = new UnidadeSaudeModel();
-        preencher(unidade, dto);
+        UnidadeSaudeModel unidade = mapper.toModel(dto);
         return mapper.toResumoDTO(repository.save(unidade));
     }
 
@@ -46,23 +45,12 @@ public class UnidadeSaudeService {
     public UnidadeSaudeResumoDTO atualizar(Long id, UnidadeSaudeRequestDTO dto) {
         UnidadeSaudeModel unidade = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Unidade de saúde não encontrada"));
-        preencher(unidade, dto);
+        mapper.updateModel(dto, unidade);
         return mapper.toResumoDTO(repository.save(unidade));
     }
 
     @Transactional
     public void remover(Long id) {
         repository.deleteById(id);
-    }
-
-    private void preencher(UnidadeSaudeModel unidade, UnidadeSaudeRequestDTO dto) {
-        unidade.setNome(dto.nome());
-        unidade.setCnes(dto.cnes());
-        unidade.setTelefone(dto.telefone());
-        unidade.setEmail(dto.email());
-        unidade.setEndereco(dto.endereco());
-        unidade.setComplemento(dto.complemento());
-        unidade.setPontoReferencia(dto.pontoReferencia());
-        unidade.setHorarioFuncionamento(dto.horarioFuncionamento());
     }
 }

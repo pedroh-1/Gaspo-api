@@ -33,6 +33,10 @@ public class ProfissionalService {
         return repository.findAll();
     }
 
+    public List<ProfissionalResponseDTO> listarTodosDTO() {
+        return mapper.toResponseDTOList(repository.findAll());
+    }
+
     public Optional<ProfissionalModel> buscarPorId(Long id) {
         return repository.findById(id);
     }
@@ -41,22 +45,38 @@ public class ProfissionalService {
         return repository.findByUnidadeSaudeId(unidadeId);
     }
 
+    public List<ProfissionalResponseDTO> buscarPorUnidadeDTO(Long unidadeId) {
+        return mapper.toResponseDTOList(repository.findByUnidadeSaudeId(unidadeId));
+    }
+
     public List<ProfissionalModel> buscarPorNome(String nome) {
         return repository.findByNomeContainingIgnoreCase(nome);
+    }
+
+    public List<ProfissionalResponseDTO> buscarPorNomeDTO(String nome) {
+        return mapper.toResponseDTOList(repository.findByNomeContainingIgnoreCase(nome));
     }
 
     public List<ProfissionalModel> buscarPorEspecialidade(String especialidade) {
         return repository.findByEspecialidadeContainingIgnoreCase(especialidade);
     }
 
+    public List<ProfissionalResponseDTO> buscarPorEspecialidadeDTO(String especialidade) {
+        return mapper.toResponseDTOList(repository.findByEspecialidadeContainingIgnoreCase(especialidade));
+    }
+
     public List<ProfissionalModel> buscarPorStatus(StatusProfissional status) {
         return repository.findByStatus(status);
     }
 
+    public List<ProfissionalResponseDTO> buscarPorStatusDTO(StatusProfissional status) {
+        return mapper.toResponseDTOList(repository.findByStatus(status));
+    }
+
     @Transactional
     public ProfissionalResponseDTO cadastrar(ProfissionalRequestDTO dto) {
-        ProfissionalModel profissional = new ProfissionalModel();
-        preencher(profissional, dto);
+        ProfissionalModel profissional = mapper.toModel(dto);
+        profissional.setUnidadeSaude(buscarUnidade(dto.unidadeSaudeId()));
         return mapper.toResponseDTO(repository.save(profissional));
     }
 
@@ -64,7 +84,8 @@ public class ProfissionalService {
     public ProfissionalResponseDTO atualizar(Long id, ProfissionalRequestDTO dto) {
         ProfissionalModel profissional = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
-        preencher(profissional, dto);
+        mapper.updateModel(dto, profissional);
+        profissional.setUnidadeSaude(buscarUnidade(dto.unidadeSaudeId()));
         return mapper.toResponseDTO(repository.save(profissional));
     }
 
@@ -81,18 +102,15 @@ public class ProfissionalService {
         repository.deleteById(id);
     }
 
-    private void preencher(ProfissionalModel profissional, ProfissionalRequestDTO dto) {
-        profissional.setNome(dto.nome());
-        profissional.setEspecialidade(dto.especialidade());
-        profissional.setEmail(dto.email());
-        profissional.setTelefone(dto.telefone());
-        profissional.setStatus(dto.status() != null ? dto.status() : StatusProfissional.ATENDENDO);
+    public ProfissionalResponseDTO toResponseDTO(ProfissionalModel profissional) {
+        return mapper.toResponseDTO(profissional);
+    }
 
-        UnidadeSaudeModel unidade = null;
-        if (dto.unidadeSaudeId() != null) {
-            unidade = unidadeSaudeRepository.findById(dto.unidadeSaudeId())
-                    .orElseThrow(() -> new RuntimeException("Unidade de saúde não encontrada"));
+    private UnidadeSaudeModel buscarUnidade(Long unidadeSaudeId) {
+        if (unidadeSaudeId == null) {
+            return null;
         }
-        profissional.setUnidadeSaude(unidade);
+        return unidadeSaudeRepository.findById(unidadeSaudeId)
+                .orElseThrow(() -> new RuntimeException("Unidade de saúde não encontrada"));
     }
 }

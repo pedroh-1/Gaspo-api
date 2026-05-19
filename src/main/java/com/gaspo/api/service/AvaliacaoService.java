@@ -2,6 +2,7 @@ package com.gaspo.api.service;
 
 import com.gaspo.api.dto.request.AvaliacaoRequestDTO;
 import com.gaspo.api.dto.response.AvaliacaoResponseDTO;
+import com.gaspo.api.mapper.AvaliacaoMapper;
 import com.gaspo.api.model.gaspo.AvaliacaoModel;
 import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.model.gaspo.UsuarioModel;
@@ -19,13 +20,16 @@ public class AvaliacaoService {
     private final AvaliacaoRepository repository;
     private final UsuarioRepository usuarioRepository;
     private final ProfissionalRepository profissionalRepository;
+    private final AvaliacaoMapper avaliacaoMapper;
 
     public AvaliacaoService(AvaliacaoRepository repository,
                             UsuarioRepository usuarioRepository,
-                            ProfissionalRepository profissionalRepository) {
+                            ProfissionalRepository profissionalRepository,
+                            AvaliacaoMapper avaliacaoMapper) {
         this.repository = repository;
         this.usuarioRepository = usuarioRepository;
         this.profissionalRepository = profissionalRepository;
+        this.avaliacaoMapper = avaliacaoMapper;
     }
 
     public AvaliacaoModel salvar(AvaliacaoModel avaliacao) {
@@ -37,13 +41,7 @@ public class AvaliacaoService {
     }
 
     public AvaliacaoResponseDTO avaliar(AvaliacaoRequestDTO request) {
-        AvaliacaoModel avaliacao = new AvaliacaoModel(
-                request.nota(),
-                request.comentario(),
-                request.pacienteId(),
-                request.profissionalId()
-        );
-
+        AvaliacaoModel avaliacao = avaliacaoMapper.toModel(request);
         return toResponse(salvar(avaliacao));
     }
 
@@ -70,17 +68,7 @@ public class AvaliacaoService {
                 ? profissionalRepository.findById(avaliacao.getProfissionalId()).orElse(null)
                 : null;
 
-        return new AvaliacaoResponseDTO(
-                avaliacao.getId(),
-                avaliacao.getNota(),
-                avaliacao.getComentario(),
-                avaliacao.getPacienteId(),
-                paciente != null ? paciente.getNome() : "Paciente não encontrado",
-                avaliacao.getProfissionalId(),
-                profissional != null ? profissional.getNome() : "Profissional não encontrado",
-                profissional != null ? profissional.getEspecialidade() : null,
-                avaliacao.getDataAvaliacao()
-        );
+        return avaliacaoMapper.toResponseDTO(avaliacao, paciente, profissional);
     }
 
     private void validarPacienteEProfissional(Long pacienteId, Long profissionalId) {
