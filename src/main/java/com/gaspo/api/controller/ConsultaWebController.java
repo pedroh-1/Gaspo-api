@@ -3,7 +3,7 @@ package com.gaspo.api.controller;
 import com.gaspo.api.dto.request.ConsultaAgendamentoRequestDTO;
 import com.gaspo.api.dto.request.ConsultaFormDTO;
 import com.gaspo.api.model.gaspo.UsuarioModel;
-import com.gaspo.api.repository.gaspo.UsuarioRepository;
+import com.gaspo.api.repository.UsuarioRepository;
 import com.gaspo.api.service.ConsultaService;
 import com.gaspo.api.service.ProfissionalService;
 import jakarta.servlet.http.HttpSession;

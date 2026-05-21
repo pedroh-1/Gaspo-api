@@ -1,4 +1,4 @@
-package com.gaspo.api.repository.gaspo;
+package com.gaspo.api.repository;
 
 import com.gaspo.api.model.enums.StatusConsulta;
 import com.gaspo.api.model.gaspo.ConsultaModel;

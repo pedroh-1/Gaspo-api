@@ -1,7 +1,7 @@
 package com.gaspo.api.service;
 
-import com.gaspo.api.repository.gaspo.FuncionarioRepository;
-import com.gaspo.api.repository.gaspo.UsuarioRepository;
+import com.gaspo.api.repository.FuncionarioRepository;
+import com.gaspo.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

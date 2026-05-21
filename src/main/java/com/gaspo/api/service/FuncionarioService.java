@@ -4,7 +4,7 @@ import com.gaspo.api.dto.request.FuncionarioCadastroDTO;
 import com.gaspo.api.dto.response.FuncionarioResponseDTO;
 import com.gaspo.api.mapper.FuncionarioMapper;
 import com.gaspo.api.model.gaspo.FuncionarioModel;
-import com.gaspo.api.repository.gaspo.FuncionarioRepository;
+import com.gaspo.api.repository.FuncionarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -4,7 +4,7 @@ import com.gaspo.api.dto.request.UnidadeSaudeRequestDTO;
 import com.gaspo.api.dto.response.UnidadeSaudeResumoDTO;
 import com.gaspo.api.mapper.UnidadeSaudeMapper;
 import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
-import com.gaspo.api.repository.gaspo.UnidadeSaudeRepository;
+import com.gaspo.api.repository.UnidadeSaudeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

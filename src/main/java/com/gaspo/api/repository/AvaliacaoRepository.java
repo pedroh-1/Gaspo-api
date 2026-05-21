@@ -1,4 +1,4 @@
-package com.gaspo.api.repository.gaspo;
+package com.gaspo.api.repository;
 
 import com.gaspo.api.model.gaspo.AvaliacaoModel;
 import org.springframework.data.jpa.repository.JpaRepository;

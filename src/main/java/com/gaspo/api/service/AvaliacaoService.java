@@ -6,9 +6,9 @@ import com.gaspo.api.mapper.AvaliacaoMapper;
 import com.gaspo.api.model.gaspo.AvaliacaoModel;
 import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.model.gaspo.UsuarioModel;
-import com.gaspo.api.repository.gaspo.AvaliacaoRepository;
-import com.gaspo.api.repository.gaspo.ProfissionalRepository;
-import com.gaspo.api.repository.gaspo.UsuarioRepository;
+import com.gaspo.api.repository.AvaliacaoRepository;
+import com.gaspo.api.repository.ProfissionalRepository;
+import com.gaspo.api.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

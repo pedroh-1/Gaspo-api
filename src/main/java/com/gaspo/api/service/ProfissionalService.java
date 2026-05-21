@@ -6,8 +6,8 @@ import com.gaspo.api.mapper.ProfissionalMapper;
 import com.gaspo.api.model.enums.StatusProfissional;
 import com.gaspo.api.model.gaspo.ProfissionalModel;
 import com.gaspo.api.model.gaspo.UnidadeSaudeModel;
-import com.gaspo.api.repository.gaspo.ProfissionalRepository;
-import com.gaspo.api.repository.gaspo.UnidadeSaudeRepository;
+import com.gaspo.api.repository.ProfissionalRepository;
+import com.gaspo.api.repository.UnidadeSaudeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

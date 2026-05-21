@@ -2,7 +2,7 @@ package com.gaspo.api.controller;
 
 import com.gaspo.api.dto.request.AvaliacaoRequestDTO;
 import com.gaspo.api.model.gaspo.UsuarioModel;
-import com.gaspo.api.repository.gaspo.UsuarioRepository;
+import com.gaspo.api.repository.UsuarioRepository;
 import com.gaspo.api.service.AvaliacaoService;
 import com.gaspo.api.service.ProfissionalService;
 import jakarta.servlet.http.HttpSession;

@@ -1,7 +1,7 @@
 package com.gaspo.api.security;
 
-import com.gaspo.api.repository.gaspo.FuncionarioRepository;
-import com.gaspo.api.repository.gaspo.UsuarioRepository;
+import com.gaspo.api.repository.FuncionarioRepository;
+import com.gaspo.api.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

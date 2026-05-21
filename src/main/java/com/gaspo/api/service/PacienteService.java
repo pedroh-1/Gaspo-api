@@ -2,7 +2,7 @@ package com.gaspo.api.service;
 
 import com.gaspo.api.dto.request.UsuarioCadastroDTO;
 import com.gaspo.api.model.gaspo.UsuarioModel;
-import com.gaspo.api.repository.gaspo.UsuarioRepository;
+import com.gaspo.api.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
