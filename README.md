@@ -15,7 +15,6 @@ externos de prontuário.
 * Maven
 * Thymeleaf
 * Springdoc OpenAPI
-* Lombok
 
 ## Estrutura
 
