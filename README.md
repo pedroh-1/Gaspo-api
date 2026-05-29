@@ -14,7 +14,7 @@ externos de prontuário.
 * PostgreSQL 16
 * Maven
 * Thymeleaf
-* Springdoc OpenAPI
+* Springdoc OpenAPI / Swwager
 
 ## Estrutura
 
