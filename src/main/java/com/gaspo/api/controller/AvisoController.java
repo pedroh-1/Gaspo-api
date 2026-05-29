@@ -5,7 +5,6 @@ import com.gaspo.api.dto.response.AvisoResponseDTO;
 import com.gaspo.api.mapper.AvisoMapper;
 import com.gaspo.api.service.AvisoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,11 +13,13 @@ import java.util.List;
 @RequestMapping("/api/avisos")
 public class AvisoController {
 
-    @Autowired
-    private AvisoService service;
+    private final AvisoService service;
+    private final AvisoMapper mapper;
 
-    @Autowired
-    private AvisoMapper mapper;
+    public AvisoController(AvisoService service, AvisoMapper mapper) {
+        this.service = service;
+        this.mapper = mapper;
+    }
 
     @GetMapping
     public List<AvisoResponseDTO> listarAvisos() {

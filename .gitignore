@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### Local PostgreSQL dev instance ###
+.local-postgres/
+
 ### Docker local database dumps ###
 docker/esus/init/*.backup
 docker/esus/init/*.dump

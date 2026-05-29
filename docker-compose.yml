@@ -1,4 +1,22 @@
 services:
+  postgres_esus:
+    image: postgres:16-alpine
+    container_name: gaspo-postgres-esus
+    environment:
+      POSTGRES_DB: esus_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+    ports:
+      - "15433:5432"
+    volumes:
+      - postgres_esus_data:/var/lib/postgresql/data
+      - ./docker/esus/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d esus_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   postgres_gaspo:
     image: postgres:16-alpine
     container_name: gaspo-postgres-gaspo
@@ -7,7 +25,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: gaspo123
     ports:
-      - "15444:5432"
+      - "15434:5432"
     volumes:
       - postgres_gaspo_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,6 +40,8 @@ services:
       dockerfile: Dockerfile
     container_name: gaspo-api
     depends_on:
+      postgres_esus:
+        condition: service_healthy
       postgres_gaspo:
         condition: service_healthy
     environment:
@@ -29,12 +49,17 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_gaspo:5432/gaspo_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: gaspo123
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      WAIT_FOR_DB_HOSTS: postgres_gaspo:5432
+      APP_DATASOURCE_GASPO_URL: jdbc:postgresql://postgres_gaspo:5432/gaspo_db
+      APP_DATASOURCE_GASPO_USERNAME: postgres
+      APP_DATASOURCE_GASPO_PASSWORD: gaspo123
+      APP_DATASOURCE_GASPO_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      APP_JPA_GASPO_HIBERNATE_DDL_AUTO: update
+      WAIT_FOR_DB_HOSTS: postgres_esus:5432,postgres_gaspo:5432
     ports:
-      - "18082:8081"
+      - "18081:8081"
     restart: unless-stopped
 
 volumes:
+  postgres_esus_data:
   postgres_gaspo_data:

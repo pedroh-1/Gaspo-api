@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.gaspo.api.repository.gaspo",
+        basePackages = "com.gaspo.api.repository",
         entityManagerFactoryRef = "gaspoEntityManagerFactory",
         transactionManagerRef = "gaspoTransactionManager"
 )
