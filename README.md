@@ -79,3 +79,8 @@ Nesse caso, mantenha o Postgres do compose ativo com:
 ```bash
 docker compose up -d postgres_gaspo
 ```
+
+## Divisão:
+
+<img width="676" height="880" alt="WhatsApp Image 2026-04-24 at 08 23 03 (1)" src="https://github.com/user-attachments/assets/195dbb84-2dea-4c23-9841-dba376d9b8f2" />
+
