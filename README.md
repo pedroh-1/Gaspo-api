@@ -36,7 +36,7 @@ Configuração padrão para execução local com o Postgres do `docker-compose.y
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:15444/gaspo_db
 spring.datasource.username=postgres
-spring.datasource.password=gaspo123
+spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
 ```
 
