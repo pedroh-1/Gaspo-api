@@ -14,7 +14,7 @@ externos de prontuário.
 * PostgreSQL 16
 * Maven
 * Thymeleaf
-* Springdoc OpenAPI / Swwager
+* Springdoc OpenAPI / Swagger
 
 ## Estrutura
 
@@ -65,7 +65,7 @@ Acesso:
 ```text
 Aplicação: http://localhost:18082
 Swagger: http://localhost:18082/swagger-ui/index.html
-PostgreSQL: localhost:15444 / gaspo_db / postgres / gaspo123
+PostgreSQL: localhost:15444 / gaspo_db / usuário postgres (senha definida no docker-compose.yml)
 ```
 
 Execução local pela IDE ou Maven:
