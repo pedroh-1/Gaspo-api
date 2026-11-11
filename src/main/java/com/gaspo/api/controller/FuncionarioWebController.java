@@ -34,6 +34,7 @@ public class FuncionarioWebController {
 
     @PostMapping
     public String cadastrar(@RequestParam String nome,
+                            @RequestParam String cpf,
                             @RequestParam String email,
                             @RequestParam(required = false) String telefone,
                             @RequestParam String senha,
@@ -46,7 +47,7 @@ public class FuncionarioWebController {
                 return "redirect:/web/login";
             }
 
-            funcionarioService.cadastrar(new FuncionarioCadastroDTO(nome, email, telefone, senha, cargo));
+            funcionarioService.cadastrar(new FuncionarioCadastroDTO(nome, cpf, email, telefone, senha, cargo));
             redirectAttributes.addFlashAttribute("mensagem", "Funcionário cadastrado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao cadastrar funcionário: " + e.getMessage());

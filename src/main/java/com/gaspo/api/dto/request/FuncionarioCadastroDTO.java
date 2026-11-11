@@ -7,6 +7,9 @@ public record FuncionarioCadastroDTO(
         @NotBlank
         String nome,
 
+        @NotBlank
+        String cpf,
+
         @Email
         @NotBlank
         String email,

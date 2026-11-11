@@ -1,3 +1,4 @@
 package com.gaspo.api.dto.request;
 
-public record LoginRequestDTO(String email, String senha) {}
+/** Login por CPF (com ou sem máscara) e senha. */
+public record LoginRequestDTO(String cpf, String senha) {}

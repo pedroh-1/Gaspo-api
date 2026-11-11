@@ -3,6 +3,7 @@ package com.gaspo.api.service;
 import com.gaspo.api.dto.request.CadastroPacienteDTO;
 import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.repository.UsuarioRepository;
+import com.gaspo.api.util.CpfUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,11 @@ public class CadastroService {
 
     @Transactional
     public UsuarioModel cadastrarPacienteCompleto(CadastroPacienteDTO dto) {
-        if (usuarioRepository.existsByCpf(dto.getCpf())) {
+        String cpf = CpfUtils.normalizar(dto.getCpf());
+        if (!CpfUtils.valido(cpf)) {
+            throw new RuntimeException("CPF inválido.");
+        }
+        if (usuarioRepository.existsByCpf(cpf) || usuarioRepository.existsByCpf(CpfUtils.formatar(cpf))) {
             throw new RuntimeException("CPF já está cadastrado.");
         }
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
@@ -28,7 +33,7 @@ public class CadastroService {
 
         UsuarioModel usuario = new UsuarioModel();
         usuario.setNome(dto.getNome());
-        usuario.setCpf(dto.getCpf());
+        usuario.setCpf(cpf);
         usuario.setCns(dto.getCns());
         usuario.setEmail(dto.getEmail());
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));

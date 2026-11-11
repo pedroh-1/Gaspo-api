@@ -138,6 +138,9 @@
             <label for="nome">Nome</label>
             <input id="nome" name="nome" required>
 
+            <label for="cpf">CPF</label>
+            <input id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" required>
+
             <label for="email">E-mail</label>
             <input id="email" name="email" type="email" required>
 
@@ -159,6 +162,7 @@
                 <thead>
                 <tr>
                     <th>Nome</th>
+                    <th>CPF</th>
                     <th>E-mail</th>
                     <th>Telefone</th>
                     <th>Cargo</th>
@@ -167,6 +171,7 @@
                 <tbody>
                 <tr th:each="funcionario : ${funcionarios}">
                     <td th:text="${funcionario.nome}">Nome</td>
+                    <td th:text="${funcionario.cpf ?: 'Não informado'}">CPF</td>
                     <td th:text="${funcionario.email}">email@gaspo</td>
                     <td th:text="${funcionario.telefone ?: 'Não informado'}">Telefone</td>
                     <td th:text="${funcionario.cargo ?: 'Não informado'}">Cargo</td>

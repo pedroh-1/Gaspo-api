@@ -6,12 +6,11 @@ import com.gaspo.api.model.gaspo.UsuarioModel;
 import com.gaspo.api.repository.FuncionarioRepository;
 import com.gaspo.api.repository.UsuarioRepository;
 import com.gaspo.api.security.TokenService;
+import com.gaspo.api.service.LoginService;
 import com.gaspo.api.service.PacienteService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.ui.Model;
@@ -30,18 +29,18 @@ public class AuthWebController {
     private final PacienteService pacienteService;
     private final UsuarioRepository usuarioRepository;
     private final FuncionarioRepository funcionarioRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final LoginService loginService;
 
     public AuthWebController(TokenService tokenService,
                              PacienteService pacienteService,
                              UsuarioRepository usuarioRepository,
                              FuncionarioRepository funcionarioRepository,
-                             PasswordEncoder passwordEncoder) {
+                             LoginService loginService) {
         this.tokenService = tokenService;
         this.pacienteService = pacienteService;
         this.usuarioRepository = usuarioRepository;
         this.funcionarioRepository = funcionarioRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.loginService = loginService;
     }
 
     @GetMapping({"/", "/login"})
@@ -79,13 +78,16 @@ public class AuthWebController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String email,
+    public String login(@RequestParam String cpf,
                         @RequestParam String senha,
                         @RequestParam(defaultValue = "USUARIO") String tipoAcesso,
                         HttpSession session,
                         RedirectAttributes redirectAttributes) {
         try {
-            UserDetails principal = buscarPrincipal(email, senha, tipoAcesso);
+            LoginService.TipoAcesso tipo = "FUNCIONARIO".equalsIgnoreCase(tipoAcesso)
+                    ? LoginService.TipoAcesso.FUNCIONARIO
+                    : LoginService.TipoAcesso.USUARIO;
+            UserDetails principal = loginService.autenticar(cpf, senha, tipo);
 
             session.setAttribute("token", tokenService.generateToken(principal));
             session.setAttribute("usuarioEmail", principal.getUsername());
@@ -96,7 +98,7 @@ public class AuthWebController {
             redirectAttributes.addFlashAttribute("mensagem", "Login realizado com sucesso!");
             return "redirect:/web/avisos";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", "E-mail, senha ou tipo de acesso inválidos.");
+            redirectAttributes.addFlashAttribute("erro", "CPF, senha ou tipo de acesso inválidos.");
             return "redirect:/web/login";
         }
     }
@@ -123,22 +125,6 @@ public class AuthWebController {
             return "FUNCIONARIO";
         }
         return "USUARIO";
-    }
-
-    private UserDetails buscarPrincipal(String email, String senha, String tipoAcesso) {
-        UserDetails principal = "FUNCIONARIO".equalsIgnoreCase(tipoAcesso)
-                ? funcionarioRepository.findByEmail(email)
-                    .map(UserDetails.class::cast)
-                    .orElseThrow(() -> new BadCredentialsException("Funcionário não encontrado."))
-                : usuarioRepository.findByEmail(email)
-                    .map(UserDetails.class::cast)
-                    .orElseThrow(() -> new BadCredentialsException("Usuário não encontrado."));
-
-        if (!passwordEncoder.matches(senha, principal.getPassword())) {
-            throw new BadCredentialsException("Credenciais inválidas.");
-        }
-
-        return principal;
     }
 
     private void preencherIdsDaSessao(HttpSession session, UserDetails principal) {

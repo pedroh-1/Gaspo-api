@@ -20,6 +20,9 @@ public class FuncionarioModel implements UserDetails {
     @Column(name = "no_funcionario", nullable = false)
     private String nome;
 
+    @Column(name = "nu_cpf", unique = true)
+    private String cpf;
+
     @Column(name = "ds_email", unique = true)
     private String email;
 
@@ -52,6 +55,14 @@ public class FuncionarioModel implements UserDetails {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getEmail() {
