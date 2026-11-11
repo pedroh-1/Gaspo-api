@@ -56,6 +56,9 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/web/**").permitAll() // Liberar rotas da pagina web/thymeleaf
                         .requestMatchers("/error").permitAll()
+                        // Avaliação da consulta: registrar e ver as suas exige login; a lista completa é do funcionário.
+                        .requestMatchers(HttpMethod.GET, "/api/avaliacoes-consulta").hasRole("FUNCIONARIO")
+                        .requestMatchers("/api/avaliacoes-consulta/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
